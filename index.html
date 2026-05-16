@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiDAR Florestal SP — Monique Rodrigues</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:      #1b4332;
+  --verde-md:   #2d6a4f;
+  --verde-lt:   #d8f3dc;
+  --verde-ac:   #40916c;
+  --verde-xlt:  #f0faf3;
+  --terra:      #7c5c3a;
+  --terra-lt:   #f5ede3;
+  --amber:      #b45309;
+  --amber-lt:   #fef3c7;
+  --cinza:      #374151;
+  --cinza-lt:   #f8f7f4;
+  --borda:      #e2e0da;
+  --branco:     #fdfcf8;
+  --sidebar-w:  300px;
+  --topbar-h:   60px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--branco);
+  color: var(--cinza);
+  display: flex;
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── SIDEBAR ─────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--verde);
+  color: #b7ddc7;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 200;
+  box-shadow: 4px 0 24px rgba(0,0,0,.18);
+}
+
+.sb-brand {
+  padding: 1.4rem 1.4rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+}
+
+.sb-brand-kicker {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--verde-ac);
+  margin-bottom: 6px;
+  opacity: .85;
+}
+
+.sb-brand h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.sb-search {
+  padding: .75rem 1rem;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.sb-search input {
+  width: 100%;
+  padding: 7px 10px 7px 30px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%2364a07a' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 9px center;
+}
+.sb-search input::placeholder{color:rgba(255,255,255,.3);}
+.sb-search input:focus{border-color:var(--verde-ac);background-color:rgba(255,255,255,.1);}
+
+#nav-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-track{background:transparent;}
+#nav-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+
+.nav-home {
+  padding: .5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 1.25rem;
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all .15s;
+  line-height: 1.45;
+}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05);}
+.nav-item.active{color:#fff;border-left-color:var(--verde-ac);background:rgba(64,145,108,.15);}
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-alto{background:#52b788;}
+.dot-medio{background:#f59f00;}
+.dot-baixo{background:#9ca3af;}
+
+.nav-group-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--verde-ac);
+  padding: .9rem 1.25rem .3rem;
+  opacity: .7;
+}
+
+.sb-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+  font-size: 11px;
+  color: rgba(255,255,255,.38);
+  flex-shrink: 0;
+}
+.sb-footer strong{color:rgba(255,255,255,.55);}
+
+/* ── MAIN ────────────────────────────────── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(253,252,248,.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--borda);
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 2.5rem;
+  gap: 1rem;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--cinza);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.breadcrumb .cur {
+  color: var(--verde-md);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.breadcrumb .sep{opacity:.3;}
+
+.topbar-badge {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-fapesp{background:#e8f0fb;color:#1a3a6e;}
+.badge-esalq{background:#fef3c7;color:#7a4000;}
+
+/* ── HOME PAGE ───────────────────────────── */
+.home-hero {
+  padding: 3rem 3rem 2rem;
+  max-width: 960px;
+}
+
+.hero-kicker {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--verde-ac);
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-kicker::before{
+  content:'';
+  display:inline-block;
+  width:28px;height:2px;
+  background:var(--verde-ac);
+}
+
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 44px;
+  font-weight: 600;
+  color: var(--verde);
+  line-height: 1.1;
+  margin-bottom: .5rem;
+}
+
+.hero-subtitle {
+  font-size: 17px;
+  color: var(--cinza);
+  font-weight: 300;
+  margin-bottom: 2rem;
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--borda);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.stat-cell {
+  background: var(--branco);
+  padding: 1.2rem 1.4rem;
+}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:4px;}
+.stat-value{font-family:'Fraunces',serif;font-size:28px;color:var(--verde);font-weight:600;}
+.stat-sub{font-size:11px;color:#9ca3af;margin-top:2px;}
+
+/* Project abstract */
+.abstract-box {
+  background: var(--verde-xlt);
+  border: 1px solid var(--verde-lt);
+  border-left: 3px solid var(--verde-ac);
+  border-radius: 0 8px 8px 0;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 2rem;
+  max-width: 760px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--cinza);
+}
+.abstract-box strong{color:var(--verde-md);}
+
+/* Fapesp badge */
+.funding-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+.funding-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border: 1px solid;
+}
+.pill-fapesp{background:#e8f0fb;color:#1a3a6e;border-color:#b8cdf5;}
+.pill-esalq{background:#fef3c7;color:#7a4000;border-color:#fcd34d;}
+.pill-igc{background:#f0faf3;color:#1b4332;border-color:#b7ddc7;}
+
+/* Category cards */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+.cat-card {
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.cat-card:hover{border-color:var(--verde-ac);background:var(--verde-xlt);transform:translateY(-1px);}
+.cat-card h3{font-size:13px;font-weight:500;color:var(--cinza);margin-bottom:3px;}
+.cat-card p{font-size:11px;color:#9ca3af;}
+.cat-icon{font-size:22px;margin-bottom:8px;}
+
+/* Impact legend */
+.legend-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--cinza);
+  margin-bottom: 2.5rem;
+  align-items: center;
+}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
+
+/* ── UC PAGE ─────────────────────────────── */
+.uc-page {
+  padding: 2rem 2.5rem;
+  max-width: 900px;
+}
+
+.uc-header {
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--borda);
+}
+
+.uc-tags {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.tag-cat{background:var(--verde-xlt);color:var(--verde-md);border-color:var(--verde-lt);}
+.tag-conservacao-alto{background:#d1fae5;color:#065f46;border-color:#6ee7b7;}
+.tag-conservacao-medio{background:#fef3c7;color:#7a4000;border-color:#fcd34d;}
+.tag-fipesp{background:#ede9fe;color:#4c1d95;border-color:#c4b5fd;}
+
+.uc-title {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--verde);
+  line-height: 1.2;
+  margin-bottom: .6rem;
+}
+
+.uc-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: .6rem;
+}
+.uc-meta span{display:flex;align-items:center;gap:5px;}
+
+/* Info grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--borda);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.info-cell{background:var(--cinza-lt);padding:1rem 1.2rem;}
+.info-cell-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:4px;}
+.info-cell-value{font-size:15px;font-weight:500;color:var(--cinza);}
+.info-cell-value.big{font-family:'Fraunces',serif;font-size:22px;color:var(--verde);}
+
+/* Impact tags */
+.impact-row{display:flex;gap:6px;flex-wrap:wrap;margin:1rem 0;}
+.impact-tag{
+  font-size:10px;font-weight:500;
+  padding:3px 9px;border-radius:4px;
+  font-family:'DM Mono',monospace;
+}
+.imp-LUC{background:#fee2e2;color:#7f1d1d;}
+.imp-FRAG{background:#fef3c7;color:#7a4000;}
+.imp-FIRE{background:#ffedd5;color:#7c2d12;}
+.imp-RES{background:#ede9fe;color:#4c1d95;}
+.imp-ANTH{background:#e0f2fe;color:#0c4a6e;}
+.imp-INV{background:#fce7f3;color:#701a75;}
+.imp-POL{background:#f3f4f6;color:#374151;}
+.imp-CLIM{background:#d1fae5;color:#065f46;}
+
+/* Download section */
+.download-section {
+  background: var(--cinza-lt);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 1.4rem;
+  margin: 1.5rem 0;
+}
+.download-section h3{
+  font-size:12px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:#9ca3af;margin-bottom:1rem;
+}
+.download-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+
+.dl-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: var(--branco);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+}
+.dl-btn:hover{border-color:var(--verde-ac);background:var(--verde-xlt);}
+.dl-btn-label{font-size:11px;font-weight:500;color:var(--cinza);}
+.dl-btn-sub{font-size:10px;color:#9ca3af;font-family:'DM Mono',monospace;}
+.dl-btn-pending{
+  display:flex;flex-direction:column;
+  align-items:flex-start;gap:4px;
+  padding:10px 14px;
+  border-radius:8px;
+  border:1px dashed #d1d5db;
+  background:transparent;
+  opacity:.55;
+}
+.dl-btn-pending .dl-btn-label{color:#9ca3af;}
+
+.shiny-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--verde-md);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all .15s;
+  margin-top: .5rem;
+}
+.shiny-btn:hover{background:var(--verde);}
+
+/* Section */
+.uc-section{margin:1.8rem 0;}
+.uc-section h2{
+  font-family:'Fraunces',serif;
+  font-size:19px;color:var(--verde);
+  margin-bottom:.8rem;
+  padding-bottom:.5rem;
+  border-bottom:1px solid var(--borda);
+}
+.uc-section p{font-size:14px;line-height:1.8;color:var(--cinza);margin-bottom:.7rem;}
+
+/* Fit table */
+.fit-table{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0;}
+.fit-table th{
+  text-align:left;padding:8px 12px;
+  background:var(--verde);color:#fff;
+  font-weight:500;font-size:11px;letter-spacing:.04em;
+}
+.fit-table td{padding:8px 12px;border-bottom:1px solid var(--borda);}
+.fit-table tr:nth-child(even) td{background:var(--cinza-lt);}
+.fit-table tr:hover td{background:var(--verde-xlt);}
+
+/* Policy pills */
+.policy-grid{display:flex;gap:8px;flex-wrap:wrap;margin:.8rem 0;}
+.policy-pill{
+  font-size:11px;padding:4px 12px;
+  border-radius:20px;
+  background:var(--verde-lt);
+  color:var(--verde-md);
+  font-weight:500;
+}
+
+/* Field placeholder */
+.field-ph {
+  display:inline-block;
+  background:var(--amber-lt);
+  border:1px dashed #fcd34d;
+  border-radius:4px;
+  padding:1px 8px;
+  font-size:12px;
+  color:var(--amber);
+  font-family:'DM Mono',monospace;
+}
+
+.fill-notice {
+  background:var(--amber-lt);
+  border-left:3px solid #fcd34d;
+  border-radius:0 6px 6px 0;
+  padding:.7rem 1rem;
+  font-size:12px;
+  color:var(--amber);
+  margin:1rem 0;
+}
+
+/* Hidden */
+.hidden{display:none!important;}
+
+/* Scrollable content area */
+#content-area{overflow-y:auto;flex:1;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-kicker">FAPESP · ESALQ/USP · IGC-SP</div>
+    <h1>Tecnologia LiDAR<br>para Monitoramento<br>Florestal em SP</h1>
+  </div>
+
+  <div class="sb-search">
+    <input type="text" id="search-input" placeholder="Buscar unidade de conservação...">
+  </div>
+
+  <div id="nav-scroll">
+    <div class="nav-home">
+      <div class="nav-item active" data-page="home">
+        <span>🌿</span> Visão Geral do Projeto
+      </div>
+    </div>
+
+    <div id="nav-groups">
+
+      <div data-group="ee">
+        <div class="nav-group-label">Estações Experimentais</div>
+        <div class="nav-item" data-page="uc" data-id="1"><span class="nav-dot dot-medio"></span>EE Anhembi</div>
+        <div class="nav-item" data-page="uc" data-id="2"><span class="nav-dot dot-medio"></span>EE Itatinga</div>
+        <div class="nav-item" data-page="uc" data-id="3"><span class="nav-dot dot-medio"></span>FE Edmundo Navarro / Rio Claro</div>
+        <div class="nav-item" data-page="uc" data-id="4"><span class="nav-dot dot-medio"></span>EE Tupi</div>
+        <div class="nav-item" data-page="uc" data-id="21"><span class="nav-dot dot-medio"></span>EE São Simão</div>
+        <div class="nav-item" data-page="uc" data-id="23"><span class="nav-dot dot-medio"></span>EE São José do Rio Preto</div>
+        <div class="nav-item" data-page="uc" data-id="24"><span class="nav-dot dot-medio"></span>EE Bento Quirino</div>
+        <div class="nav-item" data-page="uc" data-id="39"><span class="nav-dot dot-medio"></span>EE Araraquara</div>
+        <div class="nav-item" data-page="uc" data-id="41"><span class="nav-dot dot-medio"></span>EE Bauru</div>
+        <div class="nav-item" data-page="uc" data-id="42"><span class="nav-dot dot-medio"></span>FE Noroeste Paulista</div>
+        <div class="nav-item" data-page="uc" data-id="53"><span class="nav-dot dot-medio"></span>FE Pederneiras</div>
+      </div>
+
+      <div data-group="pe">
+        <div class="nav-group-label">Parques Estaduais</div>
+        <div class="nav-item" data-page="uc" data-id="6"><span class="nav-dot dot-alto"></span>PE Campos do Jordão</div>
+        <div class="nav-item" data-page="uc" data-id="10"><span class="nav-dot dot-alto"></span>PE Carlos Botelho</div>
+        <div class="nav-item" data-page="uc" data-id="13"><span class="nav-dot dot-alto"></span>PE Carlos Botelho – S. Miguel Arcanjo</div>
+        <div class="nav-item" data-page="uc" data-id="14"><span class="nav-dot dot-alto"></span>PE Carlos Botelho – Sete Barras</div>
+        <div class="nav-item" data-page="uc" data-id="11"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso</div>
+        <div class="nav-item" data-page="uc" data-id="15"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso</div>
+        <div class="nav-item" data-page="uc" data-id="16"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso – Marujá</div>
+        <div class="nav-item" data-page="uc" data-id="17"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso – Perequê</div>
+        <div class="nav-item" data-page="uc" data-id="28"><span class="nav-dot dot-alto"></span>PE Cantareira</div>
+        <div class="nav-item" data-page="uc" data-id="51"><span class="nav-dot dot-alto"></span>PE Morro do Diabo</div>
+        <div class="nav-item" data-page="uc" data-id="44"><span class="nav-dot dot-alto"></span>PE Intervales</div>
+        <div class="nav-item" data-page="uc" data-id="58"><span class="nav-dot dot-alto"></span>PE Intervales – Guapiruvu</div>
+        <div class="nav-item" data-page="uc" data-id="59"><span class="nav-dot dot-alto"></span>PE Intervales – Quilombo</div>
+        <div class="nav-item" data-page="uc" data-id="45"><span class="nav-dot dot-alto"></span>PETAR</div>
+        <div class="nav-item" data-page="uc" data-id="46"><span class="nav-dot dot-alto"></span>PETAR – Bulha D'água</div>
+        <div class="nav-item" data-page="uc" data-id="12"><span class="nav-dot dot-alto"></span>PE Serra do Mar – São Sebastião</div>
+        <div class="nav-item" data-page="uc" data-id="19"><span class="nav-dot dot-alto"></span>PE Serra do Mar – São Sebastião (2)</div>
+        <div class="nav-item" data-page="uc" data-id="47"><span class="nav-dot dot-alto"></span>PE Serra do Mar – Picinguaba</div>
+        <div class="nav-item" data-page="uc" data-id="48"><span class="nav-dot dot-alto"></span>PE Serra do Mar – Santa Virgínia</div>
+        <div class="nav-item" data-page="uc" data-id="49"><span class="nav-dot dot-alto"></span>PE Serra do Mar – Cunha</div>
+        <div class="nav-item" data-page="uc" data-id="50"><span class="nav-dot dot-alto"></span>PE Serra do Mar – Curucutu</div>
+        <div class="nav-item" data-page="uc" data-id="33"><span class="nav-dot dot-alto"></span>PE Vassununga</div>
+        <div class="nav-item" data-page="uc" data-id="57"><span class="nav-dot dot-alto"></span>PE Aguapeí</div>
+        <div class="nav-item" data-page="uc" data-id="56"><span class="nav-dot dot-alto"></span>PE Nascentes do Paranapanema</div>
+        <div class="nav-item" data-page="uc" data-id="54"><span class="nav-dot dot-medio"></span>PE Jaraguá</div>
+        <div class="nav-item" data-page="uc" data-id="55"><span class="nav-dot dot-medio"></span>PE Juquery</div>
+      </div>
+
+      <div data-group="eec">
+        <div class="nav-group-label">Estações Ecológicas</div>
+        <div class="nav-item" data-page="uc" data-id="8"><span class="nav-dot dot-alto"></span>EEc Assis</div>
+        <div class="nav-item" data-page="uc" data-id="9"><span class="nav-dot dot-alto"></span>EEc Caetetus</div>
+        <div class="nav-item" data-page="uc" data-id="31"><span class="nav-dot dot-alto"></span>EEc Juréia-Itatins</div>
+        <div class="nav-item" data-page="uc" data-id="32"><span class="nav-dot dot-alto"></span>EEc Ribeirão Preto</div>
+        <div class="nav-item" data-page="uc" data-id="34"><span class="nav-dot dot-alto"></span>EEc Jataí</div>
+        <div class="nav-item" data-page="uc" data-id="35"><span class="nav-dot dot-alto"></span>EEc Itirapina</div>
+        <div class="nav-item" data-page="uc" data-id="40"><span class="nav-dot dot-alto"></span>EEc Mogi-Guaçu</div>
+        <div class="nav-item" data-page="uc" data-id="52"><span class="nav-dot dot-alto"></span>EEc Bananal</div>
+        <div class="nav-item" data-page="uc" data-id="20"><span class="nav-dot dot-alto"></span>EEc Paulo de Faria</div>
+        <div class="nav-item" data-page="uc" data-id="22"><span class="nav-dot dot-alto"></span>EEc Santa Maria</div>
+        <div class="nav-item" data-page="uc" data-id="43"><span class="nav-dot dot-alto"></span>EEc Santa Bárbara</div>
+      </div>
+
+      <div data-group="apa">
+        <div class="nav-group-label">APAs e Reservas</div>
+        <div class="nav-item" data-page="uc" data-id="18"><span class="nav-dot dot-medio"></span>APA Banhado</div>
+        <div class="nav-item" data-page="uc" data-id="25"><span class="nav-dot dot-medio"></span>APA Cuesta Corumbataí</div>
+        <div class="nav-item" data-page="uc" data-id="26"><span class="nav-dot dot-medio"></span>APA Cuesta Guarani</div>
+        <div class="nav-item" data-page="uc" data-id="27"><span class="nav-dot dot-medio"></span>APA Cuesta Paranapanema</div>
+        <div class="nav-item" data-page="uc" data-id="29"><span class="nav-dot dot-alto"></span>Resex Taquari</div>
+        <div class="nav-item" data-page="uc" data-id="30"><span class="nav-dot dot-alto"></span>Resex Ilha do Tumba</div>
+      </div>
+
+      <div data-group="mn">
+        <div class="nav-group-label">Monumentos e Outros</div>
+        <div class="nav-item" data-page="uc" data-id="36"><span class="nav-dot dot-alto"></span>MN Pedra Grande</div>
+        <div class="nav-item" data-page="uc" data-id="37"><span class="nav-dot dot-alto"></span>MN Mantiqueira Paulista</div>
+        <div class="nav-item" data-page="uc" data-id="38"><span class="nav-dot dot-alto"></span>MN Pedra do Baú</div>
+        <div class="nav-item" data-page="uc" data-id="5"><span class="nav-dot dot-medio"></span>Itu SOS Mata Atlântica</div>
+        <div class="nav-item" data-page="uc" data-id="7"><span class="nav-dot dot-medio"></span>Mata do Pinheiro</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <strong>Monique Rodrigues da S. A. Maia</strong><br>
+    ESALQ/USP · Processo FAPESP 25/26930-1<br>
+    github.com/moniquerdsmaia
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════ -->
+<main id="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      <span>LiDAR Florestal SP</span>
+      <span class="sep">›</span>
+      <span class="cur" id="bc-cur">Visão Geral</span>
+    </div>
+    <span class="topbar-badge badge-fapesp">FAPESP 25/26930-1</span>
+    <span class="topbar-badge badge-esalq">ESALQ/USP</span>
+  </div>
+
+  <div id="content-area">
+
+  <!-- ── HOME ─────────────────────────────── -->
+  <div id="page-home">
+    <div class="home-hero">
+      <div class="hero-kicker">Tecnologia LiDAR · Monitoramento Florestal · Políticas Públicas</div>
+      <h1 class="hero-title">Unidades de Conservação<br>do Estado de São Paulo</h1>
+      <p class="hero-subtitle">Validação e geração de dados LiDAR de alta precisão para caracterização da vegetação, topografia e estrutura do dossel em 59 parcelas amostrais estratégicas — subsidiando políticas públicas de mitigação das mudanças climáticas.</p>
+
+      <div class="stats-row">
+        <div class="stat-cell">
+          <div class="stat-label">Parcelas</div>
+          <div class="stat-value">59</div>
+          <div class="stat-sub">áreas amostrais</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Drone</div>
+          <div class="stat-value" style="font-size:18px;margin-top:4px">DJI M350<br>+ L2</div>
+          <div class="stat-sub">sensor LiDAR</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Produtos</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">MDT · MDS · CHM</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Comparação</div>
+          <div class="stat-value" style="font-size:16px;margin-top:4px">IGC-SP<br>2022</div>
+          <div class="stat-sub">6 sensores aéreos</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-label">Financiamento</div>
+          <div class="stat-value" style="font-size:14px;margin-top:6px">FAPESP</div>
+          <div class="stat-sub">3 processos</div>
+        </div>
+      </div>
+
+      <div class="abstract-box">
+        <strong>Resumo do projeto:</strong> A metodologia emprega coletas com drone DJI Matrice 350 RTK e sensor LiDAR Zenmuse L2, com foco em 59 parcelas amostrais distribuídas estrategicamente no Estado de São Paulo. Os produtos digitais gerados — <strong>Modelo Digital do Terreno (MDT)</strong>, <strong>Modelo Digital de Superfície (MDS)</strong> e <strong>Canopy Height Model (CHM)</strong> — serão comparados com os dados do levantamento aerofotogramétrico IGC-SP 2022 (Consórcio DataEspacial), permitindo validação local em diferentes fitofisionomias, áreas de restauração, degradação e incêndios florestais.
+      </div>
+
+      <div class="funding-row">
+        <span class="funding-pill pill-fapesp">🔬 FAPESP 24/15211-1 · 25/26930-1 · 25/26648-4</span>
+        <span class="funding-pill pill-esalq">🎓 ESALQ / USP</span>
+        <span class="funding-pill pill-igc">🗺️ IGC-SP Voo 2022</span>
+      </div>
+
+      <div class="legend-row">
+        <strong style="font-size:11px;color:#6b7280">Grau de conservação:</strong>
+        <div class="legend-item"><div class="legend-dot" style="background:#52b788"></div><span>Alto</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59f00"></div><span>Médio</span></div>
+        <div style="width:1px;height:14px;background:var(--borda);margin:0 4px;"></div>
+        <strong style="font-size:11px;color:#6b7280">Impactos:</strong>
+        <span class="impact-tag imp-LUC">LUC</span><span style="font-size:11px">Mudança de uso</span>
+        <span class="impact-tag imp-FRAG">FRAG</span><span style="font-size:11px">Fragmentação</span>
+        <span class="impact-tag imp-FIRE">FIRE</span><span style="font-size:11px">Incêndios</span>
+        <span class="impact-tag imp-ANTH">ANTH</span><span style="font-size:11px">Pressão antrópica</span>
+        <span class="impact-tag imp-RES">RES</span><span style="font-size:11px">Extração</span>
+        <span class="impact-tag imp-CLIM">CLIM</span><span style="font-size:11px">Mudanças climáticas</span>
+      </div>
+
+      <div class="cat-grid">
+        <div class="cat-card" onclick="filterGroup('ee')">
+          <div class="cat-icon">🌲</div>
+          <h3>Estações Experimentais</h3>
+          <p>11 unidades · Cerrado e Floresta Estacional</p>
+        </div>
+        <div class="cat-card" onclick="filterGroup('pe')">
+          <div class="cat-icon">🏔️</div>
+          <h3>Parques Estaduais</h3>
+          <p>26 unidades · Ombrófila densa, restinga e manguezal</p>
+        </div>
+        <div class="cat-card" onclick="filterGroup('eec')">
+          <div class="cat-icon">🔬</div>
+          <h3>Estações Ecológicas</h3>
+          <p>11 unidades · Cerrado, floresta estacional e ombrófila</p>
+        </div>
+        <div class="cat-card" onclick="filterGroup('apa')">
+          <div class="cat-icon">🌾</div>
+          <h3>APAs e Reservas Ext.</h3>
+          <p>6 unidades · Cerrado, manguezal e floresta estacional</p>
+        </div>
+        <div class="cat-card" onclick="filterGroup('mn')">
+          <div class="cat-icon">🪨</div>
+          <h3>Monumentos e Outros</h3>
+          <p>5 unidades · Araucária, campos de altitude, floresta ombrófila</p>
+        </div>
+        <div class="cat-card" onclick="navigate('uc','2')">
+          <div class="cat-icon">📡</div>
+          <h3>Itatinga — Exemplo completo</h3>
+          <p>Ver capítulo com dados LiDAR, mapa e downloads</p>
+        </div>
+      </div>
+
+      <p style="font-size:12px;color:#9ca3af;line-height:1.7;">
+        Política pública aplicada: <strong style="color:var(--cinza)">PAC2050 · Refloresta-SP · Corredores Ecológicos · Sem Fogo · PSA Hídrico · Mico-Leão-Preto · Conectividade de Fragmentos Florestais</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── UC PAGE (template dinâmico) ──────── -->
+  <div id="page-uc" class="hidden">
+    <div class="uc-page">
+
+      <div class="uc-header">
+        <div class="uc-tags" id="uc-tags"></div>
+        <h1 class="uc-title" id="uc-title"></h1>
+        <div class="uc-meta" id="uc-meta"></div>
+      </div>
+
+      <div class="info-grid" id="uc-info-grid"></div>
+
+      <div class="impact-row" id="uc-impacts"></div>
+
+      <!-- Downloads -->
+      <div class="download-section">
+        <h3>📦 Dados LiDAR — Downloads</h3>
+        <div class="download-grid" id="uc-downloads"></div>
+        <div style="margin-top:1rem;" id="uc-shiny-btn"></div>
+      </div>
+
+      <!-- Texto técnico -->
+      <div class="uc-section">
+        <h2>Caracterização da Área</h2>
+        <div id="uc-texto-caract"></div>
+      </div>
+
+      <div class="uc-section">
+        <h2>Fitofisionomia e Vegetação</h2>
+        <div id="uc-texto-veg"></div>
+      </div>
+
+      <div class="uc-section">
+        <h2>Pressões e Impactos</h2>
+        <div id="uc-texto-impactos"></div>
+      </div>
+
+      <div class="uc-section">
+        <h2>Produtos LiDAR Gerados</h2>
+        <table class="fit-table">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Sigla</th>
+              <th>Descrição</th>
+              <th>Resolução</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="uc-produtos-table"></tbody>
+        </table>
+      </div>
+
+      <div class="uc-section">
+        <h2>Políticas Públicas Relacionadas</h2>
+        <div class="policy-grid" id="uc-policies"></div>
+        <p style="font-size:13px;line-height:1.8;margin-top:.8rem;color:var(--cinza);">
+          Os dados gerados nesta unidade subsidiam diretamente os programas acima, fornecendo informações de alta precisão sobre estrutura do dossel, topografia e potencial de sequestro de carbono.
+        </p>
+      </div>
+
+      <div class="uc-section">
+        <h2>Metodologia de Voo</h2>
+        <p>Drone: <strong>DJI Matrice 350 RTK</strong> com sensor <strong>Zenmuse L2</strong> (LiDAR). Os dados são comparados com o levantamento <strong>IGC-SP 2022</strong> realizado pelos sensores SensorLink, Riegl VQ-780, ALTM Orion H300, Optech Galaxy Prime, Leica Hyperion 2+ e Leica City Mapper 2.</p>
+        <p>Os produtos digitais são gerados em escala de centímetros: MDT pela interpolação dos pontos de solo (classe 2), MDS pelo primeiro retorno da nuvem de pontos, e CHM pela diferença MDS − MDT.</p>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- #content-area -->
+</main>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────
+const UCS = {
+  1:  { name:'Estação Experimental de Ciências Florestais Anhembi', cat:'Estação Experimental', municipio:'Anhembi', area_ha:660, fit:'Cerrado / cerradão', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'30/03–03/04/2026', status:'Agendado', shiny:null,
+        pol:['PAC2050','Refloresta-SP','Corredores Ecológicos'],
+        caract:'A Estação Experimental de Anhembi está localizada no município de Anhembi, região central do Estado de São Paulo, abrangendo aproximadamente 660 hectares de vegetação de cerrado e cerradão. A área é gerenciada pelo Instituto Florestal e representa um importante fragmento de vegetação nativa em paisagem altamente fragmentada.',
+        veg:'A fitofisionomia dominante é o Cerrado/Cerradão, com formações de cerrado sensu stricto, campo sujo e matas ciliares associadas. A área apresenta grau médio de conservação com impactos de mudança de uso da terra nas bordas e fragmentação do habitat.',
+        imp_texto:'Os principais impactos registrados incluem mudança de uso da terra (LUC) nas áreas adjacentes e fragmentação de habitat (FRAG). A pressão do entorno agrícola é o principal vetor de ameaça à conectividade da área.' },
+
+  2:  { name:'Estação Experimental de Ciências Florestais Itatinga', cat:'Estação Experimental', municipio:'Itatinga', area_ha:2300, fit:'Floresta estacional semidecidual', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'16/03–20/03/2026', status:'Concluído ✓', shiny:'COLE_AQUI_URL_SHINY',
+        pol:['PAC2050','Refloresta-SP','Corredores Ecológicos','Conectividade de Fragmentos'],
+        caract:'A Estação Experimental de Itatinga é uma das maiores e mais importantes estações de pesquisa florestal do Estado de São Paulo, com 2.300 hectares. Localizada no município de Itatinga, a área é administrada pela ESALQ/USP e abriga décadas de pesquisa em silvicultura, ecologia florestal e monitoramento ambiental. O drone DJI Matrice 350 RTK com sensor L2 realizou os primeiros voos LiDAR da área entre 16 e 20 de março de 2026, gerando três conjuntos de CHM cobrindo diferentes setores da propriedade.',
+        veg:'A vegetação é caracterizada por Floresta Estacional Semidecidual em diferentes estágios de regeneração, incluindo talhões experimentais de espécies nativas e exóticas, fragmentos de mata nativa e áreas de restauração ecológica. A diversidade de fitofisionomias torna esta área ideal para validação dos modelos digitais do IGC-SP em diferentes contextos estruturais de vegetação.',
+        imp_texto:'Os impactos predominantes são mudança de uso da terra (LUC) no entorno e fragmentação de habitat (FRAG). Dentro da estação, as atividades experimentais de silvicultura criam mosaicos de vegetação em diferentes idades e estruturas, o que é explorado metodologicamente neste projeto para testar a acurácia do CHM em diferentes densidades de dossel.' },
+
+  3:  { name:'Floresta Estadual Edmundo Navarro de Andrade / Horto Florestal de Rio Claro', cat:'Floresta Estadual', municipio:'Rio Claro', area_ha:2230, fit:'Floresta estacional', cons:'Médio', impacts:['LUC','INV'], cronograma:'20/04–24/04/2026', status:'Aguardando SIGAM', shiny:null,
+        pol:['Refloresta-SP','Corredores Ecológicos'],
+        caract:'A Floresta Estadual Edmundo Navarro de Andrade, também conhecida como Horto Florestal de Rio Claro, possui 2.230 hectares e é considerada patrimônio histórico e ambiental do Estado de São Paulo.',
+        veg:'Floresta estacional com grau médio de conservação. Apresenta espécies exóticas invasoras, principalmente eucaliptos históricos plantados por Edmundo Navarro de Andrade no início do século XX.',
+        imp_texto:'Principais impactos: mudança de uso da terra (LUC) no entorno e espécies invasoras (INV) dentro da área, especialmente eucaliptos e outras espécies introduzidas historicamente.' },
+
+  4:  { name:'Estação Experimental de Tupi', cat:'Estação Experimental', municipio:'Piracicaba', area_ha:200, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','ANTH'], cronograma:'23/03–27/03/2026', status:'Aguardando SIGAM', shiny:null,
+        pol:['Refloresta-SP','PAC2050'],
+        caract:'Estação Experimental de Tupi, com 200 hectares, localizada próximo a Piracicaba.',
+        veg:'Floresta estacional semidecidual com grau médio de conservação e fragmentação de habitat como principal impacto.',
+        imp_texto:'Impactos de fragmentação de habitat (FRAG) e pressão antrópica (ANTH) pelo entorno urbano e agrícola.' },
+
+  5:  { name:'Itu SOS Mata Atlântica', cat:'Área de Preservação', municipio:'Itu', area_ha:700, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','LUC'], cronograma:'27/04–30/04/2026', status:'Aguardando SIGAM', shiny:null,
+        pol:['Refloresta-SP','Corredores Ecológicos'],
+        caract:'Área de preservação da Mata Atlântica em Itu, com 700 hectares de floresta estacional.',
+        veg:'Floresta estacional semidecidual em grau médio de conservação.',
+        imp_texto:'Fragmentação de habitat (FRAG) e mudança de uso da terra (LUC) como principais pressões.' },
+
+  6:  { name:'Parque Estadual de Campos do Jordão', cat:'Parque Estadual', municipio:'Campos do Jordão', area_ha:8300, fit:'Floresta ombrófila mista (Araucária)', cons:'Alto', impacts:['ANTH','CLIM'], cronograma:'13/04–17/04/2026', status:'Agendado', shiny:null,
+        pol:['PAC2050','Corredores Ecológicos','Sem Fogo'],
+        caract:'O Parque Estadual de Campos do Jordão abriga a maior área de ocorrência natural de Araucária angustifolia (pinheiro-do-paraná) no Estado de São Paulo, com 8.300 hectares a elevadas altitudes na Serra da Mantiqueira.',
+        veg:'Floresta Ombrófila Mista (Floresta com Araucária) com campos de altitude associados. Alto grau de conservação. A estrutura do dossel é única no contexto paulista, com araucárias emergindo acima do dossel das espécies de Floresta Ombrófila Densa montana.',
+        imp_texto:'Pressão antrópica (ANTH) pelo turismo intenso e mudanças climáticas (CLIM) que afetam a regeneração da Araucária — espécie sensível a alterações de temperatura e precipitação.' },
+
+  7:  { name:'Mata do Pinheiro', cat:'Área de Preservação', municipio:'São Paulo', area_ha:800, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
+        pol:['Corredores Ecológicos','Conectividade de Fragmentos'],
+        caract:'Fragmento florestal urbano com 800 hectares de floresta estacional.',
+        veg:'Floresta estacional em grau médio de conservação, com pressão de fragmentação.',
+        imp_texto:'Fragmentação de habitat (FRAG) como principal impacto, agravada pela urbanização do entorno.' },
+
+  8:  { name:'Estação Ecológica de Assis', cat:'Estação Ecológica', municipio:'Assis', area_ha:1760, fit:'Cerrado sensu lato', cons:'Alto', impacts:['FIRE','INV'], cronograma:'A definir', status:'A agendar', shiny:null,
+        pol:['Sem Fogo','PAC2050','Corredores Ecológicos'],
+        caract:'A Estação Ecológica de Assis é uma das mais importantes reservas de Cerrado do Estado de São Paulo, com 1.760 hectares de vegetação bem conservada.',
+        veg:'Cerrado sensu lato em alto grau de conservação, com formações de cerrado sensu stricto, campo sujo, campo limpo e veredas. Referência para estudos de dinâmica do cerrado em SP.',
+        imp_texto:'Incêndios (FIRE) e espécies invasoras (INV) são os principais impactos. O fogo natural faz parte da dinâmica do cerrado, mas a frequência aumentada por ação antrópica é um vetor crítico de degradação.' },
+
+  9:  { name:'Estação Ecológica dos Caetetus', cat:'Estação Ecológica', municipio:'Gália / Alvinlândia', area_ha:2200, fit:'Floresta estacional madura', cons:'Alto', impacts:['FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
+        pol:['Corredores Ecológicos','Mico-Leão-Preto','Conectividade de Fragmentos'],
+        caract:'A EEc dos Caetetus é um dos raros remanescentes de Floresta Estacional Semidecidual madura no interior paulista, com 2.200 hectares. Abriga populações de espécies ameaçadas, incluindo o mico-leão-preto.',
+        veg:'Floresta estacional semidecidual em estágio avançado de regeneração, com dossel fechado e alta diversidade estrutural — contexto ideal para validação do CHM em floresta madura.',
+        imp_texto:'Fragmentação de habitat (FRAG) como principal pressão. O isolamento do fragmento reduz o fluxo gênico de espécies-chave como o mico-leão-preto.' },
+
+  10: { name:'Parque Estadual Carlos Botelho', cat:'Parque Estadual', municipio:'São Miguel Arcanjo / Sete Barras / Tapiraí', area_ha:37600, fit:'Floresta ombrófila densa', cons:'Alto', impacts:['RES','FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
+        pol:['PAC2050','Corredores Ecológicos','PSA Hídrico'],
+        caract:'O Parque Estadual Carlos Botelho é uma das maiores unidades de conservação de Mata Atlântica do Estado de São Paulo, com 37.600 hectares de Floresta Ombrófila Densa contínua.',
+        veg:'Floresta Ombrófila Densa em alto grau de conservação, com dossel que pode ultrapassar 30 metros de altura. Abriga rica biodiversidade, incluindo espécies endêmicas da Mata Atlântica.',
+        imp_texto:'Extração de recursos (RES) e fragmentação de habitat (FRAG) como principais impactos, concentrados nas bordas da unidade.' },
+};
+
+// Adicionar UCs restantes com template padrão
+const UC_DEFAULTS = {
+  11: {name:'Parque Estadual da Ilha do Cardoso',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga / manguezal',cons:'Alto',impacts:['ANTH','RES'],pol:['PAC2050','PSA Hídrico']},
+  12: {name:'PE Serra do Mar – Núcleo São Sebastião',cat:'Parque Estadual',municipio:'São Sebastião',area_ha:332000,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH','FRAG'],pol:['PAC2050','Corredores Ecológicos']},
+  13: {name:'PE Carlos Botelho – Núcleo São Miguel Arcanjo',cat:'Parque Estadual',municipio:'São Miguel Arcanjo',area_ha:37600,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050']},
+  14: {name:'PE Carlos Botelho – Núcleo Sete Barras',cat:'Parque Estadual',municipio:'Sete Barras',area_ha:37600,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['FRAG'],pol:['PAC2050','Corredores Ecológicos']},
+  15: {name:'Parque Estadual Ilha do Cardoso',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga / manguezal',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
+  16: {name:'PE Ilha do Cardoso – Núcleo Marujá',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
+  17: {name:'PE Ilha do Cardoso – Núcleo Perequê',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
+  18: {name:'APA Banhado',cat:'APA',municipio:'São Sebastião',area_ha:5000,fit:'Campos úmidos',cons:'Médio',impacts:['ANTH','POL'],pol:['PSA Hídrico']},
+  19: {name:'PE Serra do Mar – Núcleo São Sebastião (2)',cat:'Parque Estadual',municipio:'São Sebastião',area_ha:332000,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050']},
+  20: {name:'Estação Ecológica Paulo de Faria',cat:'Estação Ecológica',municipio:'Paulo de Faria',area_ha:435,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  21: {name:'Estação Experimental de São Simão',cat:'Estação Experimental',municipio:'São Simão',area_ha:700,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  22: {name:'Estação Ecológica Santa Maria',cat:'Estação Ecológica',municipio:'Santa Maria da Serra',area_ha:600,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Conectividade de Fragmentos']},
+  23: {name:'Estação Experimental São José do Rio Preto',cat:'Estação Experimental',municipio:'São José do Rio Preto',area_ha:900,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  24: {name:'Estação Experimental Bento Quirino',cat:'Estação Experimental',municipio:'Campinas',area_ha:1500,fit:'Floresta estacional',cons:'Médio',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  25: {name:'APA Cuesta Corumbataí',cat:'APA',municipio:'Rio Claro / Piracicaba',area_ha:95000,fit:'Cerrado / floresta estacional',cons:'Médio',impacts:['LUC','FRAG'],pol:['PAC2050','Refloresta-SP']},
+  26: {name:'APA Cuesta Guarani',cat:'APA',municipio:'Botucatu / São Manuel',area_ha:60000,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  27: {name:'APA Cuesta Paranapanema',cat:'APA',municipio:'Botucatu / Avaré',area_ha:120000,fit:'Cerrado / floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP','PAC2050']},
+  28: {name:'Parque Estadual da Cantareira',cat:'Parque Estadual',municipio:'São Paulo / Mairiporã',area_ha:7900,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH','FRAG'],pol:['PSA Hídrico','Corredores Ecológicos']},
+  29: {name:'Reserva Extrativista Taquari',cat:'Reserva Extrativista',municipio:'Cananéia',area_ha:1800,fit:'Manguezal',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
+  30: {name:'Reserva Extrativista Ilha do Tumba',cat:'Reserva Extrativista',municipio:'Ilha Comprida',area_ha:1600,fit:'Manguezal',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
+  31: {name:'Estação Ecológica Juréia-Itatins',cat:'Estação Ecológica',municipio:'Iguape / Peruíbe',area_ha:80000,fit:'Ombrófila densa / restinga',cons:'Alto',impacts:['RES'],pol:['PAC2050','PSA Hídrico']},
+  32: {name:'Estação Ecológica Ribeirão Preto',cat:'Estação Ecológica',municipio:'Ribeirão Preto',area_ha:150,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Conectividade de Fragmentos']},
+  33: {name:'Parque Estadual Vassununga',cat:'Parque Estadual',municipio:'Santa Rita do Passa Quatro',area_ha:2100,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Mico-Leão-Preto','Conectividade de Fragmentos']},
+  34: {name:'Estação Ecológica Jataí',cat:'Estação Ecológica',municipio:'Luís Antônio',area_ha:9000,fit:'Cerrado',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','PAC2050']},
+  35: {name:'Estação Ecológica Itirapina',cat:'Estação Ecológica',municipio:'Itirapina / Brotas',area_ha:2300,fit:'Cerrado campo limpo',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo']},
+  36: {name:'Monumento Natural Estadual da Pedra Grande',cat:'Monumento Natural',municipio:'Atibaia',area_ha:3000,fit:'Ombrófila / campos de altitude',cons:'Alto',impacts:['ANTH'],pol:['Corredores Ecológicos']},
+  37: {name:'Monumento Natural Estadual da Mantiqueira Paulista',cat:'Monumento Natural',municipio:'Monteiro Lobato / Campos do Jordão',area_ha:10000,fit:'Araucária / campos de altitude',cons:'Alto',impacts:['CLIM'],pol:['PAC2050','Sem Fogo']},
+  38: {name:'Monumento Natural Estadual da Pedra do Baú',cat:'Monumento Natural',municipio:'São Bento do Sapucaí',area_ha:3150,fit:'Araucária',cons:'Alto',impacts:['ANTH'],pol:['Corredores Ecológicos']},
+  39: {name:'Estação Experimental de Araraquara',cat:'Estação Experimental',municipio:'Araraquara',area_ha:1000,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  40: {name:'Estação Ecológica Mogi-Guaçu',cat:'Estação Ecológica',municipio:'Mogi Guaçu',area_ha:980,fit:'Cerrado / floresta estacional',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','Conectividade de Fragmentos']},
+  41: {name:'Estação Experimental de Bauru',cat:'Estação Experimental',municipio:'Bauru',area_ha:700,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  42: {name:'Floresta Estadual de Noroeste Paulista',cat:'Floresta Estadual',municipio:'Planalto / Nova Aliança',area_ha:1200,fit:'Floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP','Corredores Ecológicos']},
+  43: {name:'Estação Ecológica Santa Bárbara',cat:'Estação Ecológica',municipio:'Águas de Santa Bárbara',area_ha:2700,fit:'Cerrado',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','PAC2050']},
+  44: {name:'Parque Estadual Intervales',cat:'Parque Estadual',municipio:'Ribeirão Grande / Eldorado',area_ha:41700,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050','PSA Hídrico']},
+  45: {name:'Parque Estadual Turístico do Alto Ribeira (PETAR)',cat:'Parque Estadual',municipio:'Apiaí / Iporanga',area_ha:35700,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','PSA Hídrico']},
+  46: {name:'PETAR – Núcleo Bulha D\'água',cat:'Parque Estadual',municipio:'Iporanga',area_ha:35700,fit:'Ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050']},
+  47: {name:'PE Serra do Mar – Núcleo Picinguaba',cat:'Parque Estadual',municipio:'Ubatuba',area_ha:332000,fit:'Ombrófila densa / restinga',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','PSA Hídrico']},
+  48: {name:'PE Serra do Mar – Núcleo Santa Virgínia',cat:'Parque Estadual',municipio:'São Luís do Paraitinga',area_ha:332000,fit:'Ombrófila densa',cons:'Alto',impacts:['CLIM'],pol:['PAC2050']},
+  49: {name:'PE Serra do Mar – Núcleo Cunha',cat:'Parque Estadual',municipio:'Cunha',area_ha:332000,fit:'Ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','Corredores Ecológicos']},
+  50: {name:'PE Serra do Mar – Núcleo Curucutu',cat:'Parque Estadual',municipio:'São Paulo',area_ha:332000,fit:'Ombrófila / campos de altitude',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
+  51: {name:'Parque Estadual Morro do Diabo',cat:'Parque Estadual',municipio:'Teodoro Sampaio',area_ha:33800,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Mico-Leão-Preto','Conectividade de Fragmentos']},
+  52: {name:'Estação Ecológica do Bananal',cat:'Estação Ecológica',municipio:'Bananal',area_ha:880,fit:'Ombrófila densa',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  53: {name:'Floresta Estadual de Pederneiras',cat:'Floresta Estadual',municipio:'Pederneiras',area_ha:2000,fit:'Floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  54: {name:'Parque Estadual Jaraguá',cat:'Parque Estadual',municipio:'São Paulo',area_ha:490,fit:'Floresta ombrófila',cons:'Médio',impacts:['ANTH'],pol:['Conectividade de Fragmentos']},
+  55: {name:'Parque Estadual Juquery',cat:'Parque Estadual',municipio:'Franco da Rocha',area_ha:2000,fit:'Cerrado / campo',cons:'Médio',impacts:['FIRE'],pol:['Sem Fogo']},
+  56: {name:'PE Nascentes do Paranapanema',cat:'Parque Estadual',municipio:'Capão Bonito',area_ha:22000,fit:'Ombrófila densa',cons:'Alto',impacts:['FRAG'],pol:['PAC2050','PSA Hídrico']},
+  57: {name:'Parque Estadual Aguapeí',cat:'Parque Estadual',municipio:'Castilho',area_ha:9000,fit:'Floresta estacional / várzea',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  58: {name:'PE Intervales – Núcleo Guapiruvu',cat:'Parque Estadual',municipio:'Sete Barras',area_ha:41700,fit:'Ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050']},
+  59: {name:'PE Intervales – Núcleo Quilombo',cat:'Parque Estadual',municipio:'Eldorado',area_ha:41700,fit:'Ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050']},
+};
+
+// Merge
+Object.assign(UCS, Object.fromEntries(
+  Object.entries(UC_DEFAULTS).map(([k,v]) => [k, {
+    ...v,
+    cronograma: v.cronograma || 'A definir',
+    status: v.status || 'A agendar',
+    shiny: null,
+    caract: `[PREENCHER: Caracterização geral da ${v.name} conforme plano de manejo e literatura disponível.]`,
+    veg: `[PREENCHER: Descrição da fitofisionomia dominante (${v.fit}), espécies indicadoras, estágio de regeneração e diversidade estrutural.]`,
+    imp_texto: `[PREENCHER: Descrição dos impactos identificados (${v.impacts.join(', ')}) e sua intensidade sobre a unidade.]`
+  }])
+));
+
+const IMP_LABEL = {LUC:'Mudança de uso da terra',FRAG:'Fragmentação',FIRE:'Incêndios',RES:'Extração de recursos',ANTH:'Pressão antrópica',INV:'Espécies invasoras',POL:'Poluição',CLIM:'Mudanças climáticas'};
+
+// ── NAVIGATE ─────────────────────────────────────────────────────
+function navigate(page, id) {
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-home').classList.add('hidden');
+  document.getElementById('page-uc').classList.add('hidden');
+
+  if (page === 'home') {
+    document.getElementById('page-home').classList.remove('hidden');
+    document.getElementById('bc-cur').textContent = 'Visão Geral';
+    document.querySelector('[data-page="home"]').classList.add('active');
+  } else {
+    const uc = UCS[id];
+    if (!uc) return;
+    document.getElementById('page-uc').classList.remove('hidden');
+    document.getElementById('bc-cur').textContent = uc.name;
+
+    // Tags
+    const consClass = uc.cons === 'Alto' ? 'tag-conservacao-alto' : 'tag-conservacao-medio';
+    document.getElementById('uc-tags').innerHTML =
+      `<span class="tag tag-cat">${uc.cat}</span>
+       <span class="tag ${consClass}">Conservação: ${uc.cons}</span>
+       <span class="tag tag-fipesp">FAPESP TT4</span>`;
+
+    document.getElementById('uc-title').textContent = uc.name;
+    document.getElementById('uc-meta').innerHTML =
+      `<span>📍 ${uc.municipio} — SP</span>
+       <span>📐 ${uc.area_ha ? uc.area_ha.toLocaleString('pt-BR') + ' ha' : '—'}</span>
+       <span>🗓️ ${uc.cronograma}</span>
+       <span>📋 ${uc.status}</span>`;
+
+    // Info grid
+    document.getElementById('uc-info-grid').innerHTML = `
+      <div class="info-cell"><div class="info-cell-label">Área (ha)</div><div class="info-cell-value big">${uc.area_ha ? uc.area_ha.toLocaleString('pt-BR') : '—'}</div></div>
+      <div class="info-cell"><div class="info-cell-label">Fitofisionomia</div><div class="info-cell-value" style="font-size:13px">${uc.fit}</div></div>
+      <div class="info-cell"><div class="info-cell-label">Conservação</div><div class="info-cell-value">${uc.cons}</div></div>
+      <div class="info-cell"><div class="info-cell-label">Status voo</div><div class="info-cell-value" style="font-size:13px">${uc.status}</div></div>`;
+
+    // Impacts
+    document.getElementById('uc-impacts').innerHTML =
+      uc.impacts.map(i=>`<span class="impact-tag imp-${i}" title="${IMP_LABEL[i]||i}">${i}</span><span style="font-size:11px;color:#9ca3af">${IMP_LABEL[i]||i}</span>`).join('&nbsp;&nbsp;');
+
+    // Downloads
+    const hasDados = uc.status && uc.status.includes('Concluído');
+    const mkBtn = (label, sub, href) => href
+      ? `<a class="dl-btn" href="${href}" target="_blank"><span class="dl-btn-label">⬇ ${label}</span><span class="dl-btn-sub">${sub}</span></a>`
+      : `<div class="dl-btn-pending"><span class="dl-btn-label">⏳ ${label}</span><span class="dl-btn-sub">Aguardando processamento</span></div>`;
+
+    document.getElementById('uc-downloads').innerHTML =
+      mkBtn('CHM (.tif)', 'Canopy Height Model', hasDados ? '#' : null) +
+      mkBtn('MDT (.tif)', 'Modelo Digital do Terreno', hasDados ? '#' : null) +
+      mkBtn('MDS (.tif)', 'Modelo Digital de Superfície', hasDados ? '#' : null) +
+      mkBtn('Limite KML', 'Polígono da área', hasDados ? '#' : null) +
+      mkBtn('Limite KMZ', 'Para Google Earth', hasDados ? '#' : null);
+
+    document.getElementById('uc-shiny-btn').innerHTML = uc.shiny
+      ? `<a class="shiny-btn" href="${uc.shiny}" target="_blank">🗺️ Abrir mapa interativo (Shiny)</a>`
+      : `<span style="font-size:12px;color:#9ca3af">⏳ Mapa interativo disponível após processamento dos dados de voo.</span>`;
+
+    // Textos
+    document.getElementById('uc-texto-caract').innerHTML = `<p>${uc.caract}</p>`;
+    document.getElementById('uc-texto-veg').innerHTML = `<p>${uc.veg}</p>`;
+    document.getElementById('uc-texto-impactos').innerHTML = `<p>${uc.imp_texto}</p>`;
+
+    // Produtos table
+    document.getElementById('uc-produtos-table').innerHTML = [
+      ['MDT','Modelo Digital do Terreno','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['MDS','Modelo Digital de Superfície','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['CHM','Canopy Height Model','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['Nuvem de pontos','.laz classificada','LAZ','—', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['Limite KML/KMZ','Polígono da área','KML/KMZ','—', hasDados?'✅ Gerado':'⏳ Pendente'],
+    ].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+
+    // Policies
+    document.getElementById('uc-policies').innerHTML =
+      (uc.pol||[]).map(p=>`<span class="policy-pill">${p}</span>`).join('');
+
+    const active = document.querySelector(`[data-id="${id}"]`);
+    if (active) { active.classList.add('active'); active.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+  }
+  document.getElementById('content-area').scrollTo(0,0);
+}
+
+// ── SEARCH ───────────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', function(){
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('#nav-groups .nav-item').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('#nav-groups [data-group]').forEach(g=>{
+    const vis = [...g.querySelectorAll('.nav-item')].some(e=>e.style.display!=='none');
+    g.style.display = vis ? '' : 'none';
+  });
+});
+
+// ── EVENTS ───────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',()=>navigate(el.dataset.page, el.dataset.id));
+});
+
+function filterGroup(g) {
+  const sec = document.querySelector(`[data-group="${g}"]`);
+  if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
