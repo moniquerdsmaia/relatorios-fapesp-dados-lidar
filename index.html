@@ -148,10 +148,11 @@ body {
   padding: 1rem 1.25rem;
   border-top: 1px solid rgba(255,255,255,.07);
   font-size: 11px;
-  color: rgba(255,255,255,.38);
+  color: rgba(255,255,255,.5);
   flex-shrink: 0;
+  line-height: 1.5;
 }
-.sb-footer strong{color:rgba(255,255,255,.55);}
+.sb-footer strong{color:#fff;}
 
 /* ── MAIN ────────────────────────────────── */
 #main {
@@ -263,6 +264,15 @@ body {
   background: var(--branco);
   padding: 1.2rem 1.4rem;
 }
+.stat-cell-address {
+  grid-column: span 5;
+  background: #fdfdfc;
+  border-top: 1px solid var(--borda);
+  padding: 1rem 1.4rem;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.6;
+}
 .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:4px;}
 .stat-value{font-family:'Fraunces',serif;font-size:28px;color:var(--verde);font-weight:600;}
 .stat-sub{font-size:11px;color:#9ca3af;margin-top:2px;}
@@ -281,6 +291,32 @@ body {
   color: var(--cinza);
 }
 .abstract-box strong{color:var(--verde-md);}
+
+/* Citation box styling */
+.citation-box {
+  background: var(--terra-lt);
+  border-left: 4px solid var(--terra);
+  padding: 1.4rem;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 2rem;
+  max-width: 760px;
+}
+.citation-box h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--terra);
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.citation-box code {
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  color: #4b3621;
+  display: block;
+  word-break: break-all;
+  line-height: 1.6;
+}
 
 /* Fapesp badge */
 .funding-row {
@@ -508,28 +544,6 @@ body {
   font-weight:500;
 }
 
-/* Field placeholder */
-.field-ph {
-  display:inline-block;
-  background:var(--amber-lt);
-  border:1px dashed #fcd34d;
-  border-radius:4px;
-  padding:1px 8px;
-  font-size:12px;
-  color:var(--amber);
-  font-family:'DM Mono',monospace;
-}
-
-.fill-notice {
-  background:var(--amber-lt);
-  border-left:3px solid #fcd34d;
-  border-radius:0 6px 6px 0;
-  padding:.7rem 1rem;
-  font-size:12px;
-  color:var(--amber);
-  margin:1rem 0;
-}
-
 /* Hidden */
 .hidden{display:none!important;}
 
@@ -539,9 +553,6 @@ body {
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     SIDEBAR
-══════════════════════════════════════════ -->
 <nav id="sidebar">
   <div class="sb-brand">
     <div class="sb-brand-kicker">FAPESP · ESALQ/USP · IGC-SP</div>
@@ -568,7 +579,7 @@ body {
         <div class="nav-item" data-page="uc" data-id="3"><span class="nav-dot dot-medio"></span>FE Edmundo Navarro / Rio Claro</div>
         <div class="nav-item" data-page="uc" data-id="4"><span class="nav-dot dot-medio"></span>EE Tupi</div>
         <div class="nav-item" data-page="uc" data-id="21"><span class="nav-dot dot-medio"></span>EE São Simão</div>
-        <div class="nav-item" data-page="uc" data-id="23"><span class="nav-dot dot-medio"></span>EE São José do Rio Preto</div>
+        <div class="nav-item" data-page="uc" data-id="23"><span class="nav-dot dot-medio"></span>EE São Jose do Rio Preto</div>
         <div class="nav-item" data-page="uc" data-id="24"><span class="nav-dot dot-medio"></span>EE Bento Quirino</div>
         <div class="nav-item" data-page="uc" data-id="39"><span class="nav-dot dot-medio"></span>EE Araraquara</div>
         <div class="nav-item" data-page="uc" data-id="41"><span class="nav-dot dot-medio"></span>EE Bauru</div>
@@ -583,7 +594,7 @@ body {
         <div class="nav-item" data-page="uc" data-id="13"><span class="nav-dot dot-alto"></span>PE Carlos Botelho – S. Miguel Arcanjo</div>
         <div class="nav-item" data-page="uc" data-id="14"><span class="nav-dot dot-alto"></span>PE Carlos Botelho – Sete Barras</div>
         <div class="nav-item" data-page="uc" data-id="11"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso</div>
-        <div class="nav-item" data-page="uc" data-id="15"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso</div>
+        <div class="nav-item" data-page="uc" data-id="15"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso (Geral)</div>
         <div class="nav-item" data-page="uc" data-id="16"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso – Marujá</div>
         <div class="nav-item" data-page="uc" data-id="17"><span class="nav-dot dot-alto"></span>PE Ilha do Cardoso – Perequê</div>
         <div class="nav-item" data-page="uc" data-id="28"><span class="nav-dot dot-alto"></span>PE Cantareira</div>
@@ -644,34 +655,32 @@ body {
   </div>
 
   <div class="sb-footer">
-    <strong>Monique Rodrigues da S. A. Maia</strong><br>
-    ESALQ/USP · Processo FAPESP 25/26930-1<br>
-    github.com/moniquerdsmaia
+    <strong>M. R. S. Andrade Maia</strong> • FAPESP 25/26930-1<br>
+    <strong>M. Pinheiro Ferreira</strong> • FAPESP 24/15211-1<br>
+    Universidade de São Paulo / ESALQ<br>
+    <strong>ISBN: 978-65-999152-7-7</strong>
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════════
-     MAIN
-══════════════════════════════════════════ -->
 <main id="main">
   <div class="topbar">
     <div class="breadcrumb">
-      <span>LiDAR Florestal SP</span>
+      <span>Relatórios Técnicos LiDAR</span>
       <span class="sep">›</span>
       <span class="cur" id="bc-cur">Visão Geral</span>
     </div>
-    <span class="topbar-badge badge-fapesp">FAPESP 25/26930-1</span>
+    <span class="topbar-badge badge-fapesp">FAPESP 24/15211-1</span>
+    <span class="topbar-badge badge-fapesp" style="background:#e0f2fe;color:#0369a1;">FAPESP 25/26930-1</span>
     <span class="topbar-badge badge-esalq">ESALQ/USP</span>
   </div>
 
   <div id="content-area">
 
-  <!-- ── HOME ─────────────────────────────── -->
   <div id="page-home">
     <div class="home-hero">
-      <div class="hero-kicker">Tecnologia LiDAR · Monitoramento Florestal · Políticas Públicas</div>
+      <div class="hero-kicker">Tecnologia LiDAR · Monitoramento Florestal · Dados IGC-SP</div>
       <h1 class="hero-title">Unidades de Conservação<br>do Estado de São Paulo</h1>
-      <p class="hero-subtitle">Validação e geração de dados LiDAR de alta precisão para caracterização da vegetação, topografia e estrutura do dossel em 59 parcelas amostrais estratégicas — subsidiando políticas públicas de mitigação das mudanças climáticas.</p>
+      <p class="hero-subtitle">Validação e geração de dados LiDAR de alta precisão para caracterização da vegetação, topografia e estrutura do dossel em parcelas amostrais estratégicas — subsidiando as políticas públicas paulistas de mitigação das mudanças climáticas.</p>
 
       <div class="stats-row">
         <div class="stat-cell">
@@ -690,23 +699,39 @@ body {
           <div class="stat-sub">MDT · MDS · CHM</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-label">Comparação</div>
-          <div class="stat-value" style="font-size:16px;margin-top:4px">IGC-SP<br>2022</div>
-          <div class="stat-sub">6 sensores aéreos</div>
+          <div class="stat-label">Base de Dados</div>
+          <div class="stat-value" style="font-size:16px;margin-top:4px">IGC-SP<br>Voo 2022</div>
+          <div class="stat-sub">Nuvem Multi-Fontes</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-label">Financiamento</div>
-          <div class="stat-value" style="font-size:14px;margin-top:6px">FAPESP</div>
-          <div class="stat-sub">3 processos</div>
+          <div class="stat-label">Registro Editorial</div>
+          <div class="stat-value" style="font-size:14px;margin-top:6px">ISBN</div>
+          <div class="stat-sub">CBL Registrado</div>
+        </div>
+        <div class="stat-cell-address">
+          <strong>Instituição Sede:</strong> Universidade de São Paulo — Escola Superior de Agricultura Luiz de Queiroz (ESALQ/USP)<br>
+          <strong>Endereço:</strong> Departamento de Ciências Florestais (LCF), Laboratório de Métodos Quantitativos.<br>
+          Avenida Pádua Dias, nº 11 - Caixa Postal 9, CEP 13418-900 - Piracicaba / SP. Web: <a href="https://lcf.esalq.usp.br/lab/laborat%C3%B3rio-de-m%C3%A9todos-quantitativos" target="_blank" style="color:var(--verde-md); font-weight:500;">lcf.esalq.usp.br</a>
         </div>
       </div>
 
       <div class="abstract-box">
-        <strong>Resumo do projeto:</strong> A metodologia emprega coletas com drone DJI Matrice 350 RTK e sensor LiDAR Zenmuse L2, com foco em 59 parcelas amostrais distribuídas estrategicamente no Estado de São Paulo. Os produtos digitais gerados — <strong>Modelo Digital do Terreno (MDT)</strong>, <strong>Modelo Digital de Superfície (MDS)</strong> e <strong>Canopy Height Model (CHM)</strong> — serão comparados com os dados do levantamento aerofotogramétrico IGC-SP 2022 (Consórcio DataEspacial), permitindo validação local em diferentes fitofisionomias, áreas de restauração, degradação e incêndios florestais.
+        <strong>Resumo do projeto:</strong> Sob coordenação do Pesquisador Responsável <strong>Matheus Pinheiro Ferreira</strong> e processamento analítico executado por <strong>Monique Rodrigues da Silva Andrade Maia</strong>, a metodologia emprega coletas de campo com drone DJI Matrice 350 RTK e sensor active LiDAR Zenmuse L2. Os produtos gerados — <strong>MDT</strong>, <strong>MDS</strong> e <strong>CHM</strong> — são confrontados localmente com a base estadual do Voo 2022 (IGC-SP), viabilizando análises finas de biomassa florestal e métricas estruturais em 59 parcelas distribuídas por fitofisionomias nativas de São Paulo.
       </div>
 
-      <div class="funding-row">
-        <span class="funding-pill pill-fapesp">🔬 FAPESP 24/15211-1 · 25/26930-1 · 25/26648-4</span>
+      <div class="citation-box">
+        <h4>Como citar esta obra principal (ABNT):</h4>
+        <code>ANDRADE MAIA, M. R. S.; FERREIRA, M. P. Relatórios Técnicos Descritivos e Produtos LiDAR das Unidades de Conservação do Estado de São Paulo. Piracicaba: Edição do Autor, 2026. ISBN 978-65-999152-7-7. Disponível em: https://moniquerdsmaia.github.io/relatorios-fapesp-dados-lidar/</code>
+      </div>
+
+      <div class="uc-section" style="background:#f8f7f4; padding:1.2rem; border-radius:8px; border:1px solid var(--borda);">
+        <h2 style="font-size:15px; margin-bottom:0.5rem; border-bottom:none; color:var(--terra);">📋 Proveniência e Créditos Técnicos da Base Cartográfica de Referência</h2>
+        <p style="font-size:13px; line-height:1.6; margin-bottom:0; color:var(--cinza);">Os modelos altimétricos tridimensionais e nuvens de pontos LiDAR utilizados para validação e comparação regional decorrem do levantamento aerofotogramétrico do <strong>Voo 2022 (Consórcio DataEspacial)</strong>. Os responsáveis técnicos oficiais pela consolidação desta base de dados estrutural no estado de São Paulo são **Viviane Aparecida dos Santos Magri** e **Thiago Carmuega Rabaçal**, vinculados institucionalmente ao **Instituto Geográfico e Cartográfico (IGC-SP)**.</p>
+      </div>
+
+      <div class="funding-row" style="margin-top:1.5rem;">
+        <span class="funding-pill pill-fapesp">🔬 FAPESP 24/15211-1 (Pesquisador Resp. Matheus Pinheiro Ferreira)</span>
+        <span class="funding-pill pill-fapesp" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;">🔬 FAPESP 25/26930-1 (Autora: Monique Rodrigues da S. A. Maia)</span>
         <span class="funding-pill pill-esalq">🎓 ESALQ / USP</span>
         <span class="funding-pill pill-igc">🗺️ IGC-SP Voo 2022</span>
       </div>
@@ -759,12 +784,11 @@ body {
       </div>
 
       <p style="font-size:12px;color:#9ca3af;line-height:1.7;">
-        Política pública aplicada: <strong style="color:var(--cinza)">PAC2050 · Refloresta-SP · Corredores Ecológicos · Sem Fogo · PSA Hídrico · Mico-Leão-Preto · Conectividade de Fragmentos Florestais</strong>
+        Políticas públicas aplicadas: <strong style="color:var(--cinza)">PAC2050 · Refloresta-SP · Corredores Ecológicos · Operação SP Sem Fogo · PSA Hídrico · Plano de Ação Mico-Leão-Preto</strong>
       </p>
     </div>
   </div>
 
-  <!-- ── UC PAGE (template dinâmico) ──────── -->
   <div id="page-uc" class="hidden">
     <div class="uc-page">
 
@@ -778,14 +802,12 @@ body {
 
       <div class="impact-row" id="uc-impacts"></div>
 
-      <!-- Downloads -->
       <div class="download-section">
         <h3>📦 Dados LiDAR — Downloads</h3>
         <div class="download-grid" id="uc-downloads"></div>
         <div style="margin-top:1rem;" id="uc-shiny-btn"></div>
       </div>
 
-      <!-- Texto técnico -->
       <div class="uc-section">
         <h2>Caracterização da Área</h2>
         <div id="uc-texto-caract"></div>
@@ -821,84 +843,83 @@ body {
         <h2>Políticas Públicas Relacionadas</h2>
         <div class="policy-grid" id="uc-policies"></div>
         <p style="font-size:13px;line-height:1.8;margin-top:.8rem;color:var(--cinza);">
-          Os dados gerados nesta unidade subsidiam diretamente os programas acima, fornecendo informações de alta precisão sobre estrutura do dossel, topografia e potencial de sequestro de carbono.
+          Os dados gerados nesta unidade subsidiam diretamente os programas e planos de manejo da Secretaria de Meio Ambiente, Infraestrutura e Logística, fornecendo informações sobre biomassa florestal e relevo tridimensional.
         </p>
       </div>
 
       <div class="uc-section">
-        <h2>Metodologia de Voo</h2>
-        <p>Drone: <strong>DJI Matrice 350 RTK</strong> com sensor <strong>Zenmuse L2</strong> (LiDAR). Os dados são comparados com o levantamento <strong>IGC-SP 2022</strong> realizado pelos sensores SensorLink, Riegl VQ-780, ALTM Orion H300, Optech Galaxy Prime, Leica Hyperion 2+ e Leica City Mapper 2.</p>
-        <p>Os produtos digitais são gerados em escala de centímetros: MDT pela interpolação dos pontos de solo (classe 2), MDS pelo primeiro retorno da nuvem de pontos, e CHM pela diferença MDS − MDT.</p>
+        <h2>Metodologia e Proveniência de Dados</h2>
+        <p>Voo planejado com drone de asa rotativa <strong>DJI Matrice 350 RTK</strong> equipado com sensor laser ativo georreferenciado <strong>Zenmuse L2</strong>. A validação estrutural tridimensional baseia-se no cruzamento espacial estatístico das nuvens de pontos processadas em ambiente R (pacotes <code>lidR</code> e <code>terra</code>) com os dados altimétricos oficiais do banco multi-fontes do levantamento estadual <strong>IGC-SP Voo 2022</strong>, sob gerência técnica institucional de **Viviane Aparecida dos Santos Magri** e **Thiago Carmuega Rabaçal**.</p>
+        <p>Os modelos digitais raster são estruturados em grade matricial fina: o Modelo Digital do Terreno (MDT) resulta da filtragem e interpolação dos retornos de solo (Classe 2), o Modelo Digital de Superfície (MDS) considera os primeiros retornos altimétricos absolutos, e o Canopy Height Model (CHM) é obtido pela subtração direta MDS − MDT pixel a pixel.</p>
       </div>
 
     </div>
   </div>
 
-  </div><!-- #content-area -->
-</main>
+  </div></main>
 
 <script>
 // ── DATA ────────────────────────────────────────────────────────
 const UCS = {
-  1:  { name:'Estação Experimental de Ciências Florestais Anhembi', cat:'Estação Experimental', municipio:'Anhembi', area_ha:660, fit:'Cerrado / cerradão', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'30/03–03/04/2026', status:'Agendado', shiny:null,
+  1:  { name:'Estação Experimental de Ciências Florestais Anhembi', cat:'Estação Experimental', municipio:'Anhembi', area_ha:660, fit:'Cerrado / cerradão', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'Março/Abril 2026', status:'Em Processamento', shiny:null,
         pol:['PAC2050','Refloresta-SP','Corredores Ecológicos'],
-        caract:'A Estação Experimental de Anhembi está localizada no município de Anhembi, região central do Estado de São Paulo, abrangendo aproximadamente 660 hectares de vegetação de cerrado e cerradão. A área é gerenciada pelo Instituto Florestal e representa um importante fragmento de vegetação nativa em paisagem altamente fragmentada.',
-        veg:'A fitofisionomia dominante é o Cerrado/Cerradão, com formações de cerrado sensu stricto, campo sujo e matas ciliares associadas. A área apresenta grau médio de conservação com impactos de mudança de uso da terra nas bordas e fragmentação do habitat.',
-        imp_texto:'Os principais impactos registrados incluem mudança de uso da terra (LUC) nas áreas adjacentes e fragmentação de habitat (FRAG). A pressão do entorno agrícola é o principal vetor de ameaça à conectividade da área.' },
+        caract:'A Estação Experimental de Anhembi está localizada no município de Anhembi, região central do Estado de São Paulo, abrangendo aproximadamente 660 hectares de vegetação nativa. A área serve como um importante fragmento para modelagem de estruturas arbóreas sazonais no interior do estado.',
+        veg:'A fitofisionomia dominante é o Cerrado/Cerradão, com formações de cerrado sensu stricto, campo sujo e fragmentos associados. Apresenta transições graduais ideais para testar limiares de penetração do feixe laser do sensor L2.',
+        imp_texto:'Os principais impactos registrados em análise preliminar envolvem mudanças de uso da terra (LUC) nas matrizes de borda agrícola e fragmentação local de habitats.' },
 
-  2:  { name:'Estação Experimental de Ciências Florestais Itatinga', cat:'Estação Experimental', municipio:'Itatinga', area_ha:2300, fit:'Floresta estacional semidecidual', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'16/03–20/03/2026', status:'Concluído ✓', shiny:'COLE_AQUI_URL_SHINY',
-        pol:['PAC2050','Refloresta-SP','Corredores Ecológicos','Conectividade de Fragmentos'],
-        caract:'A Estação Experimental de Itatinga é uma das maiores e mais importantes estações de pesquisa florestal do Estado de São Paulo, com 2.300 hectares. Localizada no município de Itatinga, a área é administrada pela ESALQ/USP e abriga décadas de pesquisa em silvicultura, ecologia florestal e monitoramento ambiental. O drone DJI Matrice 350 RTK com sensor L2 realizou os primeiros voos LiDAR da área entre 16 e 20 de março de 2026, gerando três conjuntos de CHM cobrindo diferentes setores da propriedade.',
-        veg:'A vegetação é caracterizada por Floresta Estacional Semidecidual em diferentes estágios de regeneração, incluindo talhões experimentais de espécies nativas e exóticas, fragmentos de mata nativa e áreas de restauração ecológica. A diversidade de fitofisionomias torna esta área ideal para validação dos modelos digitais do IGC-SP em diferentes contextos estruturais de vegetação.',
-        imp_texto:'Os impactos predominantes são mudança de uso da terra (LUC) no entorno e fragmentação de habitat (FRAG). Dentro da estação, as atividades experimentais de silvicultura criam mosaicos de vegetação em diferentes idades e estruturas, o que é explorado metodologicamente neste projeto para testar a acurácia do CHM em diferentes densidades de dossel.' },
+  2:  { name:'Estação Experimental de Ciências Florestais Itatinga', cat:'Estação Experimental', municipio:'Itatinga', area_ha:2300, fit:'Floresta estacional semidecidual', cons:'Médio', impacts:['LUC','FRAG'], cronograma:'Março/Abril 2026', status:'Concluído ✓', shiny:'COLE_AQUI_URL_SHINY',
+        pol:['PAC2050','Refloresta-SP','Corredores Ecológicos'],
+        caract:'A Estação Experimental de Itatinga possui 2.300 hectares. Localizada no município de Itatinga, a área é vinculada às pesquisas científicas da ESALQ/USP em silvicultura, manejo e ecologia florestal. Os levantamentos com o drone DJI Matrice 350 RTK e o sensor LiDAR Zenmuse L2 compõem a base piloto tridimensional consolidada do projeto.',
+        veg:'A área apresenta remanescentes expressivos de Floresta Estacional Semidecidual, mosaicos experimentais em variadas idades e arranjos silviculturais, além de zonas sob restauração ecológica ativa. Essa heterogeneidade fornece a base ideal para calibrar e calibrar algoritmos de CHM e métricas de dossel florestal.',
+        imp_texto:'Impactos mapeados relacionam-se com a fragmentação de ecossistemas (FRAG) na paisagem regional e transições de uso da terra (LUC) históricas no entorno imediato das glebas florestais.' },
 
-  3:  { name:'Floresta Estadual Edmundo Navarro de Andrade / Horto Florestal de Rio Claro', cat:'Floresta Estadual', municipio:'Rio Claro', area_ha:2230, fit:'Floresta estacional', cons:'Médio', impacts:['LUC','INV'], cronograma:'20/04–24/04/2026', status:'Aguardando SIGAM', shiny:null,
+  3:  { name:'Floresta Estadual Edmundo Navarro de Andrade / Horto Florestal de Rio Claro', cat:'Floresta Estadual', municipio:'Rio Claro', area_ha:2230, fit:'Floresta estacional', cons:'Médio', impacts:['LUC','INV'], cronograma:'A definir', status:'A agendar', shiny:null,
         pol:['Refloresta-SP','Corredores Ecológicos'],
-        caract:'A Floresta Estadual Edmundo Navarro de Andrade, também conhecida como Horto Florestal de Rio Claro, possui 2.230 hectares e é considerada patrimônio histórico e ambiental do Estado de São Paulo.',
-        veg:'Floresta estacional com grau médio de conservação. Apresenta espécies exóticas invasoras, principalmente eucaliptos históricos plantados por Edmundo Navarro de Andrade no início do século XX.',
-        imp_texto:'Principais impactos: mudança de uso da terra (LUC) no entorno e espécies invasoras (INV) dentro da área, especialmente eucaliptos e outras espécies introduzidas historicamente.' },
+        caract:'A Floresta Estadual Edmundo Navarro de Andrade, tradicional Horto Florestal de Rio Claro, possui 2.230 hectares e representa um marco histórico para o desenvolvimento florestal paulista.',
+        veg:'Mosaico de floresta estacional semidecidual e extensos talhões de introdução arbórea histórica, exibindo níveis intermediários de adensamento estrutural.',
+        imp_texto:'Fatores de pressão antrópica periférica (LUC) e o manejo contínuo de espécies introduzidas dominantes (INV) nas subbacias internas.' },
 
-  4:  { name:'Estação Experimental de Tupi', cat:'Estação Experimental', municipio:'Piracicaba', area_ha:200, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','ANTH'], cronograma:'23/03–27/03/2026', status:'Aguardando SIGAM', shiny:null,
+  4:  { name:'Estação Experimental de Tupi', cat:'Estação Experimental', municipio:'Piracicaba', area_ha:200, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','ANTH'], cronograma:'A definir', status:'A agendar', shiny:null,
         pol:['Refloresta-SP','PAC2050'],
-        caract:'Estação Experimental de Tupi, com 200 hectares, localizada próximo a Piracicaba.',
-        veg:'Floresta estacional semidecidual com grau médio de conservação e fragmentação de habitat como principal impacto.',
-        imp_texto:'Impactos de fragmentação de habitat (FRAG) e pressão antrópica (ANTH) pelo entorno urbano e agrícola.' },
+        caract:'A Estação Experimental de Tupi possui cerca de 200 hectares e localiza-se na região do município de Piracicaba, operando como polo de conservação e educação ambientais.',
+        veg:'Vegetação secundária de Floresta Estacional Semidecidual, com dossel descontínuo e bordas marcadas por efeitos fitofisionômicos de transição.',
+        imp_texto:'Sofre com expressiva fragmentação ambiental (FRAG) regional e pressões antrópicas urbanas/rurais de entorno (ANTH).' },
 
-  5:  { name:'Itu SOS Mata Atlântica', cat:'Área de Preservação', municipio:'Itu', area_ha:700, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','LUC'], cronograma:'27/04–30/04/2026', status:'Aguardando SIGAM', shiny:null,
+  5:  { name:'Itu SOS Mata Atlântica', cat:'Área de Preservação', municipio:'Itu', area_ha:700, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG','LUC'], cronograma:'A definir', status:'A agendar', shiny:null,
         pol:['Refloresta-SP','Corredores Ecológicos'],
-        caract:'Área de preservação da Mata Atlântica em Itu, com 700 hectares de floresta estacional.',
-        veg:'Floresta estacional semidecidual em grau médio de conservação.',
-        imp_texto:'Fragmentação de habitat (FRAG) e mudança de uso da terra (LUC) como principais pressões.' },
+        caract:'Gleba monitorada de Mata Atlântica em Itu, compreendendo cerca de 700 hectares sob ações de conservação biológica.',
+        veg:'Glebas em estágios médios e avançados de regeneração natural de Floresta Estacional Semidecidual.',
+        imp_texto:'Fragmentação (FRAG) e pressões decorrentes da conversão e uso de terras limítrofes na matriz (LUC).' },
 
-  6:  { name:'Parque Estadual de Campos do Jordão', cat:'Parque Estadual', municipio:'Campos do Jordão', area_ha:8300, fit:'Floresta ombrófila mista (Araucária)', cons:'Alto', impacts:['ANTH','CLIM'], cronograma:'13/04–17/04/2026', status:'Agendado', shiny:null,
-        pol:['PAC2050','Corredores Ecológicos','Sem Fogo'],
-        caract:'O Parque Estadual de Campos do Jordão abriga a maior área de ocorrência natural de Araucária angustifolia (pinheiro-do-paraná) no Estado de São Paulo, com 8.300 hectares a elevadas altitudes na Serra da Mantiqueira.',
-        veg:'Floresta Ombrófila Mista (Floresta com Araucária) com campos de altitude associados. Alto grau de conservação. A estrutura do dossel é única no contexto paulista, com araucárias emergindo acima do dossel das espécies de Floresta Ombrófila Densa montana.',
-        imp_texto:'Pressão antrópica (ANTH) pelo turismo intenso e mudanças climáticas (CLIM) que afetam a regeneração da Araucária — espécie sensível a alterações de temperatura e precipitação.' },
+  6:  { name:'Parque Estadual de Campos do Jordão', cat:'Parque Estadual', municipio:'Campos do Jordão', area_ha:8300, fit:'Floresta ombrófila mista (Araucária)', cons:'Alto', impacts:['ANTH','CLIM'], cronograma:'A definir', status:'A agendar', shiny:null,
+        pol:['PAC2050','Corredores Ecológicos','Operação SP Sem Fogo'],
+        caract:'O Parque Estadual de Campos do Jordão preserva remanescentes contínuos marcantes de Floresta Ombrófila Mista ao longo de encostas e altitudes elevadas na Serra da Mantiqueira.',
+        veg:'Florestas com Araucária (Araucária angustifolia) e associações de campos de altitude de alta declividade. O padrão espacial de copas e indivíduos emergentes cria modelos tridimensionais complexos.',
+        imp_texto:'Vulnerabilidades ligadas a perturbações climáticas locais em ecossistemas de altitude (CLIM) e pressões de uso/turismo (ANTH).' },
 
   7:  { name:'Mata do Pinheiro', cat:'Área de Preservação', municipio:'São Paulo', area_ha:800, fit:'Floresta estacional', cons:'Médio', impacts:['FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
-        pol:['Corredores Ecológicos','Conectividade de Fragmentos'],
-        caract:'Fragmento florestal urbano com 800 hectares de floresta estacional.',
-        veg:'Floresta estacional em grau médio de conservação, com pressão de fragmentação.',
-        imp_texto:'Fragmentação de habitat (FRAG) como principal impacto, agravada pela urbanização do entorno.' },
+        pol:['Corredores Ecológicos'],
+        caract:'Gleba e fragmento florestal característico de transição sob monitoramento e demarcações ambientais.',
+        veg:'Formações secundárias associadas a tipologias de mata estacional remanescente.',
+        imp_texto:'Altos níveis de fragmentação ecológica decorrentes do isolamento espacial severo na paisagem.' },
 
-  8:  { name:'Estação Ecológica de Assis', cat:'Estação Ecológica', municipio:'Assis', area_ha:1760, fit:'Cerrado sensu lato', cons:'Alto', impacts:['FIRE','INV'], cronograma:'A definir', status:'A agendar', shiny:null,
-        pol:['Sem Fogo','PAC2050','Corredores Ecológicos'],
-        caract:'A Estação Ecológica de Assis é uma das mais importantes reservas de Cerrado do Estado de São Paulo, com 1.760 hectares de vegetação bem conservada.',
-        veg:'Cerrado sensu lato em alto grau de conservação, com formações de cerrado sensu stricto, campo sujo, campo limpo e veredas. Referência para estudos de dinâmica do cerrado em SP.',
-        imp_texto:'Incêndios (FIRE) e espécies invasoras (INV) são os principais impactos. O fogo natural faz parte da dinâmica do cerrado, mas a frequência aumentada por ação antrópica é um vetor crítico de degradação.' },
+  8:  { name:'Estação Ecológica de Assis', cat:'Estação Ecológica', municipio:'Assis', area_ha:1760, fit:'Cerrado sensu lato', cons:'Alto', impacts:['FIRE','INV'], cronograma:'Mosaico Concluído', status:'Em Análise', shiny:null,
+        pol:['Operação SP Sem Fogo','PAC2050','Corredores Ecológicos'],
+        caract:'A Estação Ecológica de Assis resguarda uma das principais reservas de Cerrado no sudoeste de São Paulo, cobrindo 1.760 hectares de áreas intocadas.',
+        veg:'Mosaico fitofisionômico completo de Cerrado sensu lato, variando desde o campo limpo, cerrado stricto sensu até formações adensadas de cerradão.',
+        imp_texto:'Histórico e vulnerabilidade a incêndios florestais sazonais (FIRE) e invasões biológicas de gramíneas/arbóreas exóticas nas bordas (INV).' },
 
   9:  { name:'Estação Ecológica dos Caetetus', cat:'Estação Ecológica', municipio:'Gália / Alvinlândia', area_ha:2200, fit:'Floresta estacional madura', cons:'Alto', impacts:['FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
-        pol:['Corredores Ecológicos','Mico-Leão-Preto','Conectividade de Fragmentos'],
-        caract:'A EEc dos Caetetus é um dos raros remanescentes de Floresta Estacional Semidecidual madura no interior paulista, com 2.200 hectares. Abriga populações de espécies ameaçadas, incluindo o mico-leão-preto.',
-        veg:'Floresta estacional semidecidual em estágio avançado de regeneração, com dossel fechado e alta diversidade estrutural — contexto ideal para validação do CHM em floresta madura.',
-        imp_texto:'Fragmentação de habitat (FRAG) como principal pressão. O isolamento do fragmento reduz o fluxo gênico de espécies-chave como o mico-leão-preto.' },
+        pol:['Corredores Ecológicos','Plano de Ação Mico-Leão-Preto'],
+        caract:'Área núcleo de conservação contendo cerca de 2.200 hectares de florestas contínuas estacionais nativas maduras no interior paulista.',
+        veg:'Floresta Estacional Semidecidual madura em avançado estágio de equilíbrio ecológico, com copas altas e sub-bosque estruturalmente complexo.',
+        imp_texto:'Pressão por isolamento biológico rígido (FRAG) em face das matrizes agrícolas limítrofes desprovidas de corredores vegetais contínuos.' },
 
-  10: { name:'Parque Estadual Carlos Botelho', cat:'Parque Estadual', municipio:'São Miguel Arcanjo / Sete Barras / Tapiraí', area_ha:37600, fit:'Floresta ombrófila densa', cons:'Alto', impacts:['RES','FRAG'], cronograma:'A definir', status:'A agendar', shiny:null,
+  10: { name:'Parque Estadual Carlos Botelho', cat:'Parque Estadual', municipio:'São Miguel Arcanjo', area_ha:37600, fit:'Floresta ombrófila densa', cons:'Alto', impacts:['RES','FRAG'], cronograma:'Mosaico Concluído', status:'Em Análise', shiny:null,
         pol:['PAC2050','Corredores Ecológicos','PSA Hídrico'],
-        caract:'O Parque Estadual Carlos Botelho é uma das maiores unidades de conservação de Mata Atlântica do Estado de São Paulo, com 37.600 hectares de Floresta Ombrófila Densa contínua.',
-        veg:'Floresta Ombrófila Densa em alto grau de conservação, com dossel que pode ultrapassar 30 metros de altura. Abriga rica biodiversidade, incluindo espécies endêmicas da Mata Atlântica.',
-        imp_texto:'Extração de recursos (RES) e fragmentação de habitat (FRAG) como principais impactos, concentrados nas bordas da unidade.' },
+        caract:'O Parque Estadual Carlos Botelho resguarda um dos maiores e mais contínuos blocos preservados de Mata Atlântica de interior e encosta do Brasil.',
+        veg:'Floresta Ombrófila Densa perenifólia contínua, com alta densidade de biomassa viva, árvores de grande porte e dosséis florestais homogêneos superando 25 metros.',
+        imp_texto:'Riscos periféricos de extração florestal clandestina (RES) e monitoramento de conectividade estrutural com áreas contíguas (FRAG).' },
 };
 
 // Adicionar UCs restantes com template padrão
@@ -910,46 +931,46 @@ const UC_DEFAULTS = {
   15: {name:'Parque Estadual Ilha do Cardoso',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga / manguezal',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
   16: {name:'PE Ilha do Cardoso – Núcleo Marujá',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
   17: {name:'PE Ilha do Cardoso – Núcleo Perequê',cat:'Parque Estadual',municipio:'Cananéia',area_ha:13600,fit:'Restinga',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
-  18: {name:'APA Banhado',cat:'APA',municipio:'São Sebastião',area_ha:5000,fit:'Campos úmidos',cons:'Médio',impacts:['ANTH','POL'],pol:['PSA Hídrico']},
+  18: {name:'APA Banhado',cat:'APA',municipio:'São José dos Campos',area_ha:5000,fit:'Campos úmidos / várzea',cons:'Médio',impacts:['ANTH','POL'],pol:['PSA Hídrico']},
   19: {name:'PE Serra do Mar – Núcleo São Sebastião (2)',cat:'Parque Estadual',municipio:'São Sebastião',area_ha:332000,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050']},
   20: {name:'Estação Ecológica Paulo de Faria',cat:'Estação Ecológica',municipio:'Paulo de Faria',area_ha:435,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
   21: {name:'Estação Experimental de São Simão',cat:'Estação Experimental',municipio:'São Simão',area_ha:700,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
-  22: {name:'Estação Ecológica Santa Maria',cat:'Estação Ecológica',municipio:'Santa Maria da Serra',area_ha:600,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Conectividade de Fragmentos']},
+  22: {name:'Estação Ecológica Santa Maria',cat:'Estação Ecológica',municipio:'Santa Maria da Serra',area_ha:600,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
   23: {name:'Estação Experimental São José do Rio Preto',cat:'Estação Experimental',municipio:'São José do Rio Preto',area_ha:900,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
-  24: {name:'Estação Experimental Bento Quirino',cat:'Estação Experimental',municipio:'Campinas',area_ha:1500,fit:'Floresta estacional',cons:'Médio',impacts:['FRAG'],pol:['Corredores Ecológicos']},
-  25: {name:'APA Cuesta Corumbataí',cat:'APA',municipio:'Rio Claro / Piracicaba',area_ha:95000,fit:'Cerrado / floresta estacional',cons:'Médio',impacts:['LUC','FRAG'],pol:['PAC2050','Refloresta-SP']},
-  26: {name:'APA Cuesta Guarani',cat:'APA',municipio:'Botucatu / São Manuel',area_ha:60000,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  24: {name:'Estação Experimental Bento Quirino',cat:'Estação Experimental',municipio:'São Simão',area_ha:1500,fit:'Cerrado / Floresta',cons:'Médio',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  25: {name:'APA Cuesta Corumbataí',cat:'APA',municipio:'Rio Claro / Itirapina',area_ha:95000,fit:'Cerrado / floresta estacional',cons:'Médio',impacts:['LUC','FRAG'],pol:['PAC2050','Refloresta-SP']},
+  26: {name:'APA Cuesta Guarani',cat:'APA',municipio:'Botucatu / São Manuel',area_ha:60000,fit:'Cerrado / Cuesta',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
   27: {name:'APA Cuesta Paranapanema',cat:'APA',municipio:'Botucatu / Avaré',area_ha:120000,fit:'Cerrado / floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP','PAC2050']},
   28: {name:'Parque Estadual da Cantareira',cat:'Parque Estadual',municipio:'São Paulo / Mairiporã',area_ha:7900,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH','FRAG'],pol:['PSA Hídrico','Corredores Ecológicos']},
-  29: {name:'Reserva Extrativista Taquari',cat:'Reserva Extrativista',municipio:'Cananéia',area_ha:1800,fit:'Manguezal',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
-  30: {name:'Reserva Extrativista Ilha do Tumba',cat:'Reserva Extrativista',municipio:'Ilha Comprida',area_ha:1600,fit:'Manguezal',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
+  29: {name:'Reserva Extrativista Taquari',cat:'Reserva Extrativista',municipio:'Cananéia',area_ha:1800,fit:'Manguezal / restinga',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
+  30: {name:'Reserva Extrativista Ilha do Tumba',cat:'Reserva Extrativista',municipio:'Cananéia',area_ha:1600,fit:'Manguezal',cons:'Alto',impacts:['RES'],pol:['PSA Hídrico']},
   31: {name:'Estação Ecológica Juréia-Itatins',cat:'Estação Ecológica',municipio:'Iguape / Peruíbe',area_ha:80000,fit:'Ombrófila densa / restinga',cons:'Alto',impacts:['RES'],pol:['PAC2050','PSA Hídrico']},
-  32: {name:'Estação Ecológica Ribeirão Preto',cat:'Estação Ecológica',municipio:'Ribeirão Preto',area_ha:150,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Conectividade de Fragmentos']},
-  33: {name:'Parque Estadual Vassununga',cat:'Parque Estadual',municipio:'Santa Rita do Passa Quatro',area_ha:2100,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Mico-Leão-Preto','Conectividade de Fragmentos']},
-  34: {name:'Estação Ecológica Jataí',cat:'Estação Ecológica',municipio:'Luís Antônio',area_ha:9000,fit:'Cerrado',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','PAC2050']},
-  35: {name:'Estação Ecológica Itirapina',cat:'Estação Ecológica',municipio:'Itirapina / Brotas',area_ha:2300,fit:'Cerrado campo limpo',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo']},
+  32: {name:'Estação Ecológica Ribeirão Preto',cat:'Estação Ecológica',municipio:'Ribeirão Preto',area_ha:150,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  33: {name:'Parque Estadual Vassununga',cat:'Parque Estadual',municipio:'Santa Rita do Passa Quatro',area_ha:2100,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Plano de Ação Mico-Leão-Preto']},
+  34: {name:'Estação Ecológica Jataí',cat:'Estação Ecológica',municipio:'Luís Antônio',area_ha:9000,fit:'Cerrado / Cerradão',cons:'Alto',impacts:['FIRE'],pol:['Operação SP Sem Fogo','PAC2050']},
+  35: {name:'Estação Ecológica Itirapina',cat:'Estação Ecológica',municipio:'Itirapina / Brotas',area_ha:2300,fit:'Cerrado campo limpo',cons:'Alto',impacts:['FIRE'],pol:['Operação SP Sem Fogo']},
   36: {name:'Monumento Natural Estadual da Pedra Grande',cat:'Monumento Natural',municipio:'Atibaia',area_ha:3000,fit:'Ombrófila / campos de altitude',cons:'Alto',impacts:['ANTH'],pol:['Corredores Ecológicos']},
-  37: {name:'Monumento Natural Estadual da Mantiqueira Paulista',cat:'Monumento Natural',municipio:'Monteiro Lobato / Campos do Jordão',area_ha:10000,fit:'Araucária / campos de altitude',cons:'Alto',impacts:['CLIM'],pol:['PAC2050','Sem Fogo']},
-  38: {name:'Monumento Natural Estadual da Pedra do Baú',cat:'Monumento Natural',municipio:'São Bento do Sapucaí',area_ha:3150,fit:'Araucária',cons:'Alto',impacts:['ANTH'],pol:['Corredores Ecológicos']},
-  39: {name:'Estação Experimental de Araraquara',cat:'Estação Experimental',municipio:'Araraquara',area_ha:1000,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
-  40: {name:'Estação Ecológica Mogi-Guaçu',cat:'Estação Ecológica',municipio:'Mogi Guaçu',area_ha:980,fit:'Cerrado / floresta estacional',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','Conectividade de Fragmentos']},
+  37: {name:'Monumento Natural Estadual da Mantiqueira Paulista',cat:'Monumento Natural',municipio:'Piquete / Cruzeiro',area_ha:10000,fit:'Araucária / campos de altitude',cons:'Alto',impacts:['CLIM'],pol:['PAC2050','Operação SP Sem Fogo']},
+  38: {name:'Monumento Natural Estadual da Pedra do Baú',cat:'Monumento Natural',municipio:'São Bento do Sapucaí',area_ha:3150,fit:'Araucária / Ombrófila',cons:'Alto',impacts:['ANTH'],pol:['Corredores Ecológicos']},
+  39: {name:'Estação Experimental de Araraquara',cat:'Estação Experimental',municipio:'Araraquara',area_ha:1000,fit:'Cerrado / Cerradão',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  40: {name:'Estação Ecológica Mogi-Guaçu',cat:'Estação Ecológica',municipio:'Mogi Guaçu',area_ha:980,fit:'Cerrado / floresta estacional',cons:'Alto',impacts:['FIRE'],pol:['Operação SP Sem Fogo']},
   41: {name:'Estação Experimental de Bauru',cat:'Estação Experimental',municipio:'Bauru',area_ha:700,fit:'Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
-  42: {name:'Floresta Estadual de Noroeste Paulista',cat:'Floresta Estadual',municipio:'Planalto / Nova Aliança',area_ha:1200,fit:'Floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP','Corredores Ecológicos']},
-  43: {name:'Estação Ecológica Santa Bárbara',cat:'Estação Ecológica',municipio:'Águas de Santa Bárbara',area_ha:2700,fit:'Cerrado',cons:'Alto',impacts:['FIRE'],pol:['Sem Fogo','PAC2050']},
-  44: {name:'Parque Estadual Intervales',cat:'Parque Estadual',municipio:'Ribeirão Grande / Eldorado',area_ha:41700,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050','PSA Hídrico']},
+  42: {name:'Floresta Estadual de Noroeste Paulista',cat:'Floresta Estadual',municipio:'S. José do Rio Preto',area_ha:1200,fit:'Floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP','Corredores Ecológicos']},
+  43: {name:'Estação Ecológica Santa Bárbara',cat:'Estação Ecológica',municipio:'Águas de Santa Bárbara',area_ha:2700,fit:'Cerrado / Cerradão',cons:'Alto',impacts:['FIRE'],pol:['Operação SP Sem Fogo','PAC2050']},
+  44: {name:'Parque Estadual Intervales',cat:'Parque Estadual',municipio:'Ribeirão Grande / Guapiara',area_ha:41700,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050','PSA Hídrico']},
   45: {name:'Parque Estadual Turístico do Alto Ribeira (PETAR)',cat:'Parque Estadual',municipio:'Apiaí / Iporanga',area_ha:35700,fit:'Floresta ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','PSA Hídrico']},
   46: {name:'PETAR – Núcleo Bulha D\'água',cat:'Parque Estadual',municipio:'Iporanga',area_ha:35700,fit:'Ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050']},
   47: {name:'PE Serra do Mar – Núcleo Picinguaba',cat:'Parque Estadual',municipio:'Ubatuba',area_ha:332000,fit:'Ombrófila densa / restinga',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','PSA Hídrico']},
   48: {name:'PE Serra do Mar – Núcleo Santa Virgínia',cat:'Parque Estadual',municipio:'São Luís do Paraitinga',area_ha:332000,fit:'Ombrófila densa',cons:'Alto',impacts:['CLIM'],pol:['PAC2050']},
   49: {name:'PE Serra do Mar – Núcleo Cunha',cat:'Parque Estadual',municipio:'Cunha',area_ha:332000,fit:'Ombrófila densa',cons:'Alto',impacts:['ANTH'],pol:['PAC2050','Corredores Ecológicos']},
-  50: {name:'PE Serra do Mar – Núcleo Curucutu',cat:'Parque Estadual',municipio:'São Paulo',area_ha:332000,fit:'Ombrófila / campos de altitude',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
-  51: {name:'Parque Estadual Morro do Diabo',cat:'Parque Estadual',municipio:'Teodoro Sampaio',area_ha:33800,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Mico-Leão-Preto','Conectividade de Fragmentos']},
+  50: {name:'PE Serra do Mar – Núcleo Curucutu',cat:'Parque Estadual',municipio:'Itanhaém / S. Paulo',area_ha:332000,fit:'Ombrófila / campos de altitude',cons:'Alto',impacts:['ANTH'],pol:['PSA Hídrico']},
+  51: {name:'Parque Estadual Morro do Diabo',cat:'Parque Estadual',municipio:'Teodoro Sampaio',area_ha:33800,fit:'Floresta estacional',cons:'Alto',impacts:['FRAG'],pol:['Plano de Ação Mico-Leão-Preto']},
   52: {name:'Estação Ecológica do Bananal',cat:'Estação Ecológica',municipio:'Bananal',area_ha:880,fit:'Ombrófila densa',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
-  53: {name:'Floresta Estadual de Pederneiras',cat:'Floresta Estadual',municipio:'Pederneiras',area_ha:2000,fit:'Floresta estacional',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
-  54: {name:'Parque Estadual Jaraguá',cat:'Parque Estadual',municipio:'São Paulo',area_ha:490,fit:'Floresta ombrófila',cons:'Médio',impacts:['ANTH'],pol:['Conectividade de Fragmentos']},
-  55: {name:'Parque Estadual Juquery',cat:'Parque Estadual',municipio:'Franco da Rocha',area_ha:2000,fit:'Cerrado / campo',cons:'Médio',impacts:['FIRE'],pol:['Sem Fogo']},
+  53: {name:'Floresta Estadual de Pederneiras',cat:'Floresta Estadual',municipio:'Pederneiras',area_ha:2000,fit:'Floresta estacional / Cerrado',cons:'Médio',impacts:['LUC'],pol:['Refloresta-SP']},
+  54: {name:'Parque Estadual Jaraguá',cat(--Parque Estadual',municipio:'São Paulo',area_ha:490,fit:'Floresta ombrófila densa / mista',cons:'Médio',impacts:['ANTH'],pol:['Corredores Ecológicos']},
+  55: {name:'Parque Estadual Juquery',cat:'Parque Estadual',municipio:'Franco da Rocha',area_ha:2000,fit:'Cerrado / campo cerrado',cons:'Médio',impacts:['FIRE'],pol:['Operação SP Sem Fogo']},
   56: {name:'PE Nascentes do Paranapanema',cat:'Parque Estadual',municipio:'Capão Bonito',area_ha:22000,fit:'Ombrófila densa',cons:'Alto',impacts:['FRAG'],pol:['PAC2050','PSA Hídrico']},
-  57: {name:'Parque Estadual Aguapeí',cat:'Parque Estadual',municipio:'Castilho',area_ha:9000,fit:'Floresta estacional / várzea',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
+  57: {name:'Parque Estadual Aguapeí',cat:'Parque Estadual',municipio:'Guaiçara / Castilho',area_ha:9000,fit:'Floresta estacional / várzea',cons:'Alto',impacts:['FRAG'],pol:['Corredores Ecológicos']},
   58: {name:'PE Intervales – Núcleo Guapiruvu',cat:'Parque Estadual',municipio:'Sete Barras',area_ha:41700,fit:'Ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050']},
   59: {name:'PE Intervales – Núcleo Quilombo',cat:'Parque Estadual',municipio:'Eldorado',area_ha:41700,fit:'Ombrófila densa',cons:'Alto',impacts:['RES'],pol:['PAC2050']},
 };
@@ -1034,9 +1055,9 @@ function navigate(page, id) {
 
     // Produtos table
     document.getElementById('uc-produtos-table').innerHTML = [
-      ['MDT','Modelo Digital do Terreno','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
-      ['MDS','Modelo Digital de Superfície','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
-      ['CHM','Canopy Height Model','GeoTIFF','~5 cm GSD', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['MDT','Modelo Digital do Terreno','GeoTIFF','Métrica', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['MDS','Modelo Digital de Superfície','GeoTIFF','Métrica', hasDados?'✅ Gerado':'⏳ Pendente'],
+      ['CHM','Canopy Height Model','GeoTIFF','Métrica', hasDados?'✅ Gerado':'⏳ Pendente'],
       ['Nuvem de pontos','.laz classificada','LAZ','—', hasDados?'✅ Gerado':'⏳ Pendente'],
       ['Limite KML/KMZ','Polígono da área','KML/KMZ','—', hasDados?'✅ Gerado':'⏳ Pendente'],
     ].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
